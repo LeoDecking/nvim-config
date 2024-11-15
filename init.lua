@@ -90,8 +90,18 @@ P.S. You can delete this when you're done too. It's your config now! :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+vim.cmd 'set shellcmdflag=-c'
+vim.cmd 'set shellxquote='
+vim.cmd 'set expandtab'
+vim.cmd 'set tabstop=2'
+vim.cmd 'set softtabstop=2'
+vim.cmd 'set shiftwidth=2'
+vim.cmd 'set relativenumber'
+
+vim.keymap.set('n', '<C-b>', '<Cmd>Neotree toggle<CR>')
+
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -176,10 +186,10 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -254,6 +264,15 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
     },
+    config = function()
+      require('gitsigns').setup()
+
+      vim.keymap.set('n', '<leader>gp', ':Gitsigns preview_hunk<CR>', { desc = 'Preview hunk' })
+      vim.keymap.set('n', '<leader>gt', ':Gitsigns toggle_current_line_blame<CR>', { desc = 'Toggle line blame' })
+    end,
+  },
+  {
+    'tpope/vim-fugitive',
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -383,9 +402,10 @@ require('lazy').setup({
         --  All the info you're looking for is in `:help telescope.setup()`
         --
         -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
+        --   file_ignore_patterns = { 'node_modulese', '.git' },
+        --   -- mappings = {
+        --   --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+        --   -- },
         -- },
         -- pickers = {}
         extensions = {
@@ -411,6 +431,11 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+      local vstask = require('telescope').extensions.vstask
+      vim.keymap.set('n', '<leader>ta', vstask.tasks, { desc = '[T][A]sks' })
+      vim.keymap.set('n', '<leader>ti', vstask.inputs, { desc = '[T]ask [I]nputs' })
+      vim.keymap.set('n', '<leader>tj', vstask.jobs, { desc = '[T]ask [J]sks' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -526,6 +551,7 @@ require('lazy').setup({
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
           map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+          --map('gD', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
@@ -535,8 +561,9 @@ require('lazy').setup({
           --  Similar to document symbols, except searches over your entire project.
           map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
-          -- Rename the variable under your cursor.
-          --  Most Language Servers support renaming across files, etc.
+          map('<leader>K', vim.lsp.buf.hover, '[G]et [H]over')
+          map('<C_H>', vim.lsp.buf.hover, '[G]et [H]over', 'i')
+
           map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
 
           -- Execute a code action, usually your cursor needs to be on top of an error
@@ -589,13 +616,13 @@ require('lazy').setup({
       })
 
       -- Change diagnostic symbols in the sign column (gutter)
-      -- if vim.g.have_nerd_font then
-      --   local signs = { Error = '', Warn = '', Hint = '', Info = '' }
-      --   for type, icon in pairs(signs) do
-      --     local hl = 'DiagnosticSign' .. type
-      --     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-      --   end
-      -- end
+      if vim.g.have_nerd_font then
+        local signs = { Error = '', Warn = '', Hint = '', Info = '' }
+        for type, icon in pairs(signs) do
+          local hl = 'DiagnosticSign' .. type
+          vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+        end
+      end
 
       -- LSP servers and clients are able to communicate to each other what features they support.
       --  By default, Neovim doesn't support everything that is in the LSP specification.
@@ -614,10 +641,10 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
+        clangd = {},
         -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
+        pyright = {},
+        rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -625,6 +652,30 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
+        -- {
+        --   'pmizio/typescript-tools.nvim',
+        --   dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
+        --   opts = {},
+        --   config = function()
+        --     require('typescript-tools').setup {
+        --       on_attach = function(client, bufnr)
+        --         client.server_capabilities.documentFormattingProvider = false
+        --         client.server_capabilities.documentRangeFormattingProvider = false
+        --       end,
+        --       settings = {
+        --         jsx_close_tag = {
+        --           enable = true,
+        --           filetypes = { 'javascriptreact', 'typescriptreact' },
+        --         },
+        --       },
+        --     }
+        --   end,
+        -- },
+        -- {
+        --   'pmizio/typescript-tools.nvim',
+        --   dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
+        --   opts = {},
+        -- },
         --
 
         lua_ls = {
@@ -639,6 +690,41 @@ require('lazy').setup({
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               -- diagnostics = { disable = { 'missing-fields' } },
             },
+          },
+        },
+        wgsl_analyzer = {
+          settings = {
+            ['wgsl-analyzer'] = {},
+          },
+          handlers = {
+            ['wgsl-analyzer/requestConfiguration'] = function()
+              return {
+                success = true,
+                shaderDefs = {},
+                customImports = {
+                  data_structures = 'file:///G:/Programmieren/2024/draw-application/application/draw_app_shared/src/mpvg/data_structures.wgsl',
+                  -- "test::abc": "file:///G:/Programmieren/2024/draw-application/application/draw_app_shared/src/test2.wgsl",
+                  test = 'file:///G:/Programmieren/2024/draw-application/application/draw_app_shared/src/test2.wgsl',
+                },
+                trace = {
+                  extension = false,
+                  server = false,
+                },
+                inlayHints = {
+                  enabled = true,
+                  typeHints = true,
+                  parameterHints = true,
+                  structLayoutHints = false,
+                  typeVerbosity = 'inner',
+                },
+                diagnostics = {
+                  typeErrors = true,
+                  nagaParsingErrors = true,
+                  nagaValidationErrors = false,
+                  nagaVersion = 'main',
+                },
+              }
+            end,
           },
         },
       }
@@ -785,6 +871,10 @@ require('lazy').setup({
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
           ['<C-y>'] = cmp.mapping.confirm { select = true },
+          -- ['.'] = cmp.mapping.confirm { select = true },
+          -- [' '] = cmp.mapping.confirm { select = true },
+          -- ['Tab'] = cmp.mapping.confirm { select = true },
+          -- ['<Esc>'] = cmp.mapping.abort(),
 
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
@@ -891,6 +981,25 @@ require('lazy').setup({
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
+  { 'catppuccin/nvim', name = 'catppuccin', priority = 999 },
+  { 'mhinz/vim-startify' },
+  { 'github/copilot.vim' },
+  {
+    'nosduco/remote-sshfs.nvim',
+    dependencies = { 'nvim-telescope/telescope.nvim' },
+    opts = {
+      -- Refer to the configuration section below
+      -- or leave empty for defaults
+    },
+  },
+  {
+    'EthanJWright/vs-tasks.nvim',
+    dependencies = {
+      'nvim-lua/popup.nvim',
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope.nvim',
+    },
+  },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
@@ -927,17 +1036,17 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
@@ -963,6 +1072,55 @@ require('lazy').setup({
       lazy = '💤 ',
     },
   },
+})
+
+require('catppuccin').setup()
+vim.cmd.colorscheme 'catppuccin'
+
+require('vstask').setup {
+  cache_json_conf = true, -- don't read the json conf every time a task is ran
+  cache_strategy = 'last', -- can be "most" or "last" (most used / last used)
+  config_dir = '.vscode', -- directory to look for tasks.json and launch.json
+  use_harpoon = true, -- use harpoon to auto cache terminals
+  telescope_keys = { -- change the telescope bindings used to launch tasks
+    vertical = '<C-v>',
+    split = '<C-p>',
+    tab = '<C-t>',
+    current = '<CR>',
+    background = '<C-b>',
+    watch = '<C-w>',
+  },
+  autodetect = { -- auto load scripts
+    npm = 'on',
+  },
+  terminal = 'toggleterm',
+  term_opts = {
+    vertical = {
+      direction = 'vertical',
+      size = '80',
+    },
+    horizontal = {
+      direction = 'horizontal',
+      size = '10',
+    },
+    current = {
+      direction = 'float',
+    },
+    tab = {
+      direction = 'tab',
+    },
+  },
+  json_parser = 'vim.fn.json.decode',
+}
+
+-- require('telescope').load_extension 'remote-sshfs'
+-- autocmd FileType wgsl set commentstring=//\ %s
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'wgsl',
+  callback = function()
+    vim.bo.commentstring = '// %s'
+  end,
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
