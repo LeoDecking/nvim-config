@@ -644,6 +644,7 @@ require('lazy').setup({
         clangd = {},
         -- gopls = {},
         pyright = {},
+        fortls = {},
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -743,6 +744,7 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code,
         'clangd',
+        'fortls',
         'clang-format',
         'codelldb',
       })
@@ -759,6 +761,13 @@ require('lazy').setup({
             require('lspconfig')[server_name].setup(server)
           end,
         },
+      }
+
+      require('lspconfig').fortls.setup {
+        cmd = { 'fortls', '--notify_init', '--hover_signature', '--hover_language=fortran', '--use_signature_help' },
+        filetypes = { 'fortran' },
+        root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
+        settings = {},
       }
     end,
   },
