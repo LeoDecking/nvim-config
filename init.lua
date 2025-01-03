@@ -764,7 +764,7 @@ require('lazy').setup({
       }
 
       require('lspconfig').fortls.setup {
-        cmd = { 'fortls', '--notify_init', '--hover_signature', '--hover_language=fortran', '--use_signature_help' },
+        cmd = { 'fortls', '--notify_init', '--hover_signature', '--hover_language=fortran', '--use_signature_help', '--lowercase_intrinsics' },
         filetypes = { 'fortran' },
         root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
         settings = {},
