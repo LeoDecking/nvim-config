@@ -644,6 +644,7 @@ require('lazy').setup({
         clangd = {},
         -- gopls = {},
         pyright = {},
+        fortls = {},
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -743,6 +744,7 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code,
         'clangd',
+        'fortls',
         'clang-format',
         'codelldb',
       })
@@ -759,6 +761,13 @@ require('lazy').setup({
             require('lspconfig')[server_name].setup(server)
           end,
         },
+      }
+
+      require('lspconfig').fortls.setup {
+        cmd = { 'fortls', '--notify_init', '--hover_signature', '--hover_language=fortran', '--use_signature_help', '--lowercase_intrinsics' },
+        filetypes = { 'fortran' },
+        root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
+        settings = {},
       }
     end,
   },
@@ -1126,5 +1135,45 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+require('toggleterm').setup {
+  size = 20,
+  open_mapping = [[<leader>#]],
+  hide_numbers = true, -- hide the number column in toggleterm buffers
+  shade_filetypes = {},
+  shade_terminals = true,
+  -- shading_factor = '<number>', -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
+  start_in_insert = true,
+  insert_mappings = true, -- whether or not the open mapping applies in insert mode
+  persist_size = true,
+  direction = 'horizontal',
+  close_on_exit = true, -- close the terminal window when the process exits
+  shell = vim.o.shell, -- change the default shell
+}
+
+require('dap').adapters.codelldb = {
+  type = 'server',
+  port = '${port}',
+  executable = {
+    command = 'codelldb',
+    args = { '--port', '${port}' },
+  },
+}
+require('dap').configurations.cpp = {
+  {
+    name = 'Launch',
+    type = 'codelldb',
+    request = 'launch',
+    program = function()
+      return vim.fn.input 'Path to executable: '
+    end,
+    cwd = '${workspaceFolder}',
+    stopOnEntry = true,
+    args = function()
+      -- Prompt user to input command-line arguments
+      local input = vim.fn.input 'Arguments (space-separated): '
+      return vim.split(input, ' ') -- Split the input into a table of arguments
+    end,
+  },
+}
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
