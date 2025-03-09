@@ -98,7 +98,16 @@ vim.cmd 'set softtabstop=2'
 vim.cmd 'set shiftwidth=2'
 vim.cmd 'set relativenumber'
 
+vim.keymap.set('n', 'gN', '<Cmd>tabnew<CR>')
+vim.keymap.set('n', 'gV', '<Cmd>vsplit<CR>')
+
+vim.keymap.set('n', '<Leader>ww', '<Cmd>set wrap!<CR>')
+
 vim.keymap.set('n', '<C-b>', '<Cmd>Neotree toggle<CR>')
+
+vim.keymap.set('i', '<M-Up>', '<Plug>(copilot-previous)')
+vim.keymap.set('i', '<M-Down>', '<Plug>(copilot-next)')
+vim.keymap.set('i', '<M-Left>', '<Plug>(copilot-dismiss)')
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
@@ -407,7 +416,11 @@ require('lazy').setup({
         --   --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   -- },
         -- },
-        -- pickers = {}
+        pickers = {
+          diagnostics = {
+            sort_by = 'severity',
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -573,6 +586,16 @@ require('lazy').setup({
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
           map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+
+          if vim.lsp.inlay_hint then
+            map('<leader>L', function()
+              if vim.lsp.inlay_hint.is_enabled() then
+                vim.lsp.inlay_hint.enable(false, { 0 })
+              else
+                vim.lsp.inlay_hint.enable(true, { 0 })
+              end
+            end, 'Toggle Inlay Hints')
+          end
 
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
@@ -740,11 +763,12 @@ require('lazy').setup({
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
+      -- local ensure_installed = vim.tbl_keys(servers or {})
+      local ensure_installed = vim.tbl_keys {}
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code,
         'clangd',
-        'fortls',
+        -- 'fortls',
         'clang-format',
         'codelldb',
       })
@@ -764,7 +788,15 @@ require('lazy').setup({
       }
 
       require('lspconfig').fortls.setup {
-        cmd = { 'fortls', '--notify_init', '--hover_signature', '--hover_language=fortran', '--use_signature_help', '--lowercase_intrinsics' },
+        cmd = {
+          'fortls',
+          -- '~/AppData/Local/nvim-data/mason/bin/fortls.CMD',
+          '--notify_init',
+          '--hover_signature',
+          '--hover_language=fortran',
+          '--use_signature_help',
+          '--lowercase_intrinsics',
+        },
         filetypes = { 'fortran' },
         root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
         settings = {},

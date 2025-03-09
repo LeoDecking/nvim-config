@@ -110,6 +110,11 @@ return {
     },
   },
   {
+    'mrcjkb/rustaceanvim',
+    version = '^5', -- Recommended
+    lazy = false, -- This plugin is already lazy
+  },
+  {
     'GCBallesteros/NotebookNavigator.nvim',
     keys = {
       {
@@ -169,5 +174,9 @@ return {
       local opts = { custom_textobjects = { h = nn.miniai_spec } }
       return opts
     end,
+  },
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
   },
 }
