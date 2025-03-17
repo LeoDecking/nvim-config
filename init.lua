@@ -644,7 +644,13 @@ require('lazy').setup({
         clangd = {},
         -- gopls = {},
         pyright = {},
-        fortls = {},
+        fortls = {
+          -- cmd = { 'fortls', '--notify_init', '--hover_signature', '--hover_language=fortran', '--use_signature_help', '--lowercase_intrinsics' },
+          cmd = { '/usr/bin/fortls', '--notify_init', '--hover_signature', '--lowercase_intrinsics' },
+          filetypes = { 'fortran' },
+          root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
+          settings = {},
+        },
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -740,11 +746,12 @@ require('lazy').setup({
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
+      -- local ensure_installed = vim.tbl_keys(servers or {})
+      local ensure_installed = vim.tbl_keys {}
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code,
         'clangd',
-        'fortls',
+        -- 'fortls',
         'clang-format',
         'codelldb',
       })
@@ -763,12 +770,12 @@ require('lazy').setup({
         },
       }
 
-      require('lspconfig').fortls.setup {
-        cmd = { 'fortls', '--notify_init', '--hover_signature', '--hover_language=fortran', '--use_signature_help', '--lowercase_intrinsics' },
-        filetypes = { 'fortran' },
-        root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
-        settings = {},
-      }
+      -- require('lspconfig').fortls.setup {
+      --   cmd = { 'fortls', '--notify_init', '--hover_signature', '--hover_language=fortran', '--use_signature_help', '--lowercase_intrinsics' },
+      --   filetypes = { 'fortran' },
+      --   root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
+      --   settings = {},
+      -- }
     end,
   },
 
