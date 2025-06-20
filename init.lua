@@ -379,6 +379,13 @@ require('lazy').setup({
           return vim.fn.executable 'make' == 1
         end,
       },
+      {
+        'isak102/telescope-git-file-history.nvim',
+        dependencies = {
+          'nvim-lua/plenary.nvim',
+          'tpope/vim-fugitive',
+        },
+      },
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
@@ -431,6 +438,7 @@ require('lazy').setup({
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+      pcall(require('telescope').load_extension, 'git_file_history')
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -472,6 +480,10 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+      vim.keymap.set('n', '<leader>sc', function()
+        require('telescope').extensions.git_file_history.git_file_history()
+      end, { desc = '[S]earch [C]ommit History' })
     end,
   },
 
@@ -504,6 +516,13 @@ require('lazy').setup({
 
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
+    },
+    opts = {
+      setup = {
+        -- rust_analyzer = function()
+        --   return true
+        -- end,
+      },
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -987,7 +1006,7 @@ require('lazy').setup({
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-
+  { 'echasnovski/mini.surround', version = false },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -1004,7 +1023,22 @@ require('lazy').setup({
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
+      require('mini.surround').setup {
+        mappings = {
+          add = 'gsa', -- Add surrounding in Normal and Visual modes
+          --e.g. gsaiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
+          --e.g. gsaa}) - [S]urround [A]dd [A]round [}]Braces [)]Paren
+          delete = 'gsd', -- Delete surrounding
+          --e.g.    gsd"   - [S]urround [D]elete ["]quotes
+          replace = 'gsr', -- Replace surrounding
+          --e.g.     gsr)'  - [S]urround [R]eplace [)]Paren by [']quote
+          find = 'gsf', -- Find surrounding (to the right)
+          find_left = 'gsF', -- Find surrounding (to the left)
+          highlight = 'gsh', -- Highlight surrounding
+          update_n_lines = 'gsn', -- Update `n_lines`
+        },
+        n_lines = 500,
+      }
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
