@@ -97,6 +97,20 @@ vim.cmd 'set tabstop=2'
 vim.cmd 'set softtabstop=2'
 vim.cmd 'set shiftwidth=2'
 vim.cmd 'set relativenumber'
+vim.cmd 'set textwidth=0'
+
+vim.cmd [[
+  imap <silent><expr> <Tab> luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<Tab>'
+  " -1 for jumping backwards.
+  inoremap <silent> <S-Tab> <cmd>lua require'luasnip'.jump(-1)<Cr>
+
+  snoremap <silent> <Tab> <cmd>lua require('luasnip').jump(1)<Cr>
+  snoremap <silent> <S-Tab> <cmd>lua require('luasnip').jump(-1)<Cr>
+
+  " For changing choices in choiceNodes (not strictly necessary for a basic setup).
+  imap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-E>'
+  smap <silent><expr> <C-E> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-E>'
+]]
 
 vim.keymap.set('n', 'gN', '<Cmd>tabnew<CR>')
 vim.keymap.set('n', 'gV', '<Cmd>vsplit<CR>')
@@ -108,6 +122,11 @@ vim.keymap.set('n', '<C-b>', '<Cmd>Neotree toggle<CR>')
 vim.keymap.set('i', '<M-Up>', '<Plug>(copilot-previous)')
 vim.keymap.set('i', '<M-Down>', '<Plug>(copilot-next)')
 vim.keymap.set('i', '<M-Left>', '<Plug>(copilot-dismiss)')
+
+vim.g.copilot_no_tab_map = true
+vim.g.copilot_assume_mapped = true
+vim.api.nvim_set_keymap('i', '<C-j>', 'copilot#Accept("<CR>")', { silent = true, expr = true })
+-- vim.g.copilot_tab_fallback = ''
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
@@ -175,6 +194,35 @@ vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
+
+vim.api.nvim_create_user_command('ConfigCommit', function(opts)
+  local msg = opts.args
+  if msg == '' then
+    print 'Commit message required.'
+    return
+  end
+
+  local config_path = vim.fn.stdpath 'config'
+
+  -- Save current working directory
+  local cwd = vim.fn.getcwd()
+
+  -- Change to config directory
+  vim.cmd('cd ' .. config_path)
+
+  -- Run Git commands
+  vim.fn.system 'git add .'
+  vim.fn.system("git commit -m '" .. msg .. "'")
+  vim.fn.system 'git push'
+
+  -- Return to original directory
+  vim.cmd('cd ' .. cwd)
+
+  print 'Neovim config committed and pushed.'
+end, {
+  nargs = 1,
+  desc = 'Commit and push Neovim config with a message',
+})
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -683,6 +731,8 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+        -- latex = {
+        -- },
         clangd = {},
         -- gopls = {},
         pyright = {},
@@ -796,6 +846,7 @@ require('lazy').setup({
         -- 'fortls',
         'clang-format',
         'codelldb',
+        -- 'ltex-ls',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -811,6 +862,12 @@ require('lazy').setup({
           end,
         },
       }
+
+      -- require('lspconfig')['ltex-ls-plus'].setup {
+      --   cmd = { 'ltex-ls-plus' },
+      --   filetypes = { 'markdown', 'text', 'tex', 'latex', 'bib' },
+      --   root_dir = require('lspconfig').util.root_pattern('.ltex-ls-plus', '.git'),
+      -- }
 
       require('lspconfig').fortls.setup {
         cmd = {
@@ -871,7 +928,9 @@ require('lazy').setup({
       },
     },
   },
-
+  {
+    'micangl/cmp-vimtex',
+  },
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
     event = 'InsertEnter',
@@ -912,7 +971,11 @@ require('lazy').setup({
       -- See `:help cmp`
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
-      luasnip.config.setup {}
+      luasnip.config.setup {
+        updateevents = 'TextChanged,TextChangedI', -- Update snippets on text change
+        enable_autosnippets = true, -- Enable auto-snippets
+        store_selection_keys = '<c-s>', -- Key to store selection
+      }
 
       cmp.setup {
         snippet = {
@@ -950,6 +1013,15 @@ require('lazy').setup({
           --['<CR>'] = cmp.mapping.confirm { select = true },
           --['<Tab>'] = cmp.mapping.select_next_item(),
           --['<S-Tab>'] = cmp.mapping.select_prev_item(),
+          -- ['<C-j'] = cmp.mapping(function(fallback)
+          --   cmp.mapping.abort()
+          --   local copilot_keys = vim.fn['copilot#Accept']()
+          --   if copilot_keys ~= '' then
+          --     vim.api.nvim_feedkeys(copilot_keys, 'i', true)
+          --   else
+          --     fallback()
+          --   end
+          -- end),
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
@@ -964,16 +1036,16 @@ require('lazy').setup({
           --
           -- <c-l> will move you to the right of each of the expansion locations.
           -- <c-h> is similar, except moving you backwards.
-          ['<C-l>'] = cmp.mapping(function()
-            if luasnip.expand_or_locally_jumpable() then
-              luasnip.expand_or_jump()
-            end
-          end, { 'i', 's' }),
-          ['<C-h>'] = cmp.mapping(function()
-            if luasnip.locally_jumpable(-1) then
-              luasnip.jump(-1)
-            end
-          end, { 'i', 's' }),
+          -- ['<C-l>'] = cmp.mapping(function()
+          --   if luasnip.expand_or_locally_jumpable() then
+          --     luasnip.expand_or_jump()
+          --   end
+          -- end, { 'i', 's' }),
+          -- ['<C-h>'] = cmp.mapping(function()
+          --   if luasnip.locally_jumpable(-1) then
+          --     luasnip.jump(-1)
+          --   end
+          -- end, { 'i', 's' }),
 
           -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -987,6 +1059,7 @@ require('lazy').setup({
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+          { name = 'vimtex' },
         },
       }
     end,
@@ -1084,6 +1157,18 @@ require('lazy').setup({
       'nvim-telescope/telescope.nvim',
     },
   },
+  {
+    'lervag/vimtex',
+    lazy = false, -- we don't want to lazy load VimTeX
+    -- tag = "v2.15", -- uncomment to pin to a specific release
+    init = function()
+      -- VimTeX configuration goes here, e.g.
+      -- vim.g.vimtex_view_method = 'zathura'
+      vim.g.vimtex_view_general_viewer = 'SumatraPDF'
+      vim.g.vimtex_view_general_options = '-reuse-instance -forward-search @tex @line @pdf'
+      -- vim.g.vimtex_view_general_options_latexmk = '-reuse-instance'
+    end,
+  },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
@@ -1095,6 +1180,7 @@ require('lazy').setup({
       auto_install = true,
       highlight = {
         enable = true,
+        disable = { 'tex', 'latex' },
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
@@ -1159,7 +1245,7 @@ require('lazy').setup({
 })
 
 require('catppuccin').setup()
-vim.cmd.colorscheme 'catppuccin'
+vim.cmd.colorscheme 'catppuccin-latte'
 
 require('vstask').setup {
   cache_json_conf = true, -- don't read the json conf every time a task is ran
@@ -1247,5 +1333,15 @@ require('dap').configurations.cpp = {
     end,
   },
 }
+
+-- require('luasnip').config.setup {
+--   -- history = true, -- Keep around the last snippet used
+--   updateevents = 'TextChanged,TextChangedI', -- Update snippets on text change
+--   enable_autosnippets = true, -- Enable auto-snippets
+--   store_selection_keys = '<c-s>', -- Key to store selection
+-- }
+vim.g.tex_flavor = 'latex'
+require('luasnip.loaders.from_lua').load { paths = { '~/AppData/Local/nvim/LuaSnip/', '~/.config/nvim/LuaSnip/' } }
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
