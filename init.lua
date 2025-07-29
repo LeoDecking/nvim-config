@@ -198,27 +198,40 @@ vim.opt.scrolloff = 10
 vim.api.nvim_create_user_command('ConfigCommit', function(opts)
   local msg = opts.args
   if msg == '' then
-    print 'Commit message required.'
+    vim.notify('❗ Commit message required.', vim.log.levels.ERROR)
     return
   end
 
   local config_path = vim.fn.stdpath 'config'
-
-  -- Save current working directory
   local cwd = vim.fn.getcwd()
-
-  -- Change to config directory
   vim.cmd('cd ' .. config_path)
 
-  -- Run Git commands
-  vim.fn.system 'git add .'
-  vim.fn.system("git commit -m '" .. msg .. "'")
-  vim.fn.system 'git push'
+  local function run_git_cmd(cmd)
+    local output = vim.fn.systemlist(cmd)
+    local status = vim.v.shell_error
+    local joined_output = table.concat(output, '\n')
+    if status ~= 0 then
+      vim.cmd('cd ' .. cwd) -- return early
+      vim.notify('❌ Error running: ' .. cmd .. '\n' .. joined_output, vim.log.levels.ERROR)
+      return false
+    else
+      vim.notify('✅ ' .. cmd .. ':\n' .. joined_output, vim.log.levels.INFO)
+      return true
+    end
+  end
 
-  -- Return to original directory
+  if not run_git_cmd 'git add .' then
+    return
+  end
+  if not run_git_cmd('git commit -m "' .. msg .. '"') then
+    return
+  end
+  if not run_git_cmd 'git push' then
+    return
+  end
+
   vim.cmd('cd ' .. cwd)
-
-  print 'Neovim config committed and pushed.'
+  vim.notify('✅ Neovim config successfully committed and pushed.', vim.log.levels.INFO)
 end, {
   nargs = 1,
   desc = 'Commit and push Neovim config with a message',
