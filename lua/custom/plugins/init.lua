@@ -109,11 +109,11 @@ return {
       { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'Open lazy git' },
     },
   },
-  {
-    'mrcjkb/rustaceanvim',
-    version = '^5', -- Recommended
-    lazy = false, -- This plugin is already lazy
-  },
+  -- {
+  --   'mrcjkb/rustaceanvim',
+  --   version = '^5', -- Recommended
+  --   lazy = false, -- This plugin is already lazy
+  -- },
   {
     'GCBallesteros/NotebookNavigator.nvim',
     keys = {
