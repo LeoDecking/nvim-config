@@ -79,7 +79,11 @@ return {
   s({ trig = '$ (%p)', condition = tex_utils.in_text, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$<>', { f(cap1) })),
   s({ trig = '$  ', condition = tex_utils.in_text, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$ ', {})),
   s({ trig = '_', dscr = 'Underscore', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('_{<>}', { i(1) })),
+  s({ trig = '²', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{2<>}', { i(1) })),
+  s({ trig = '³', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{3<>}', { i(1) })),
+  s({ trig = 'î', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{i<>}', { i(1) })),
   s({ trig = '^', dscr = 'Caret', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{<>}', { i(1) })),
+  s({ trig = '\\sqrt', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\sqrt{<>}', { i(1) })),
   s({ trig = '|', condition = tex_utils.in_mathzone, word_Trig = false, snippetType = 'autosnippet' }, fmta('|<>|', { i(1) })),
   s({ trig = '\\{', condition = tex_utils.in_mathzone(), word_trig = false, snippetType = 'autosnippet' }, fmta('\\{<>\\}', { d(1, get_visual) })),
   s(
@@ -92,8 +96,10 @@ return {
     fmta('<>^{\\dagger}', { f(cap1) })
   ),
   s({ trig = '\\sl', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\sum\\limits_{<>}', { i(1) })),
+  s({ trig = '\\pl', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\prod\\limits_{<>}', { i(1) })),
   s({ trig = '\\cref', condition = tex_utils.in_text, snippetType = 'autosnippet', wordTrig = false }, fmta('\\cref{<>}', { i(1) })),
   s({ trig = '\\cite', condition = tex_utils.in_text, snippetType = 'autosnippet', wordTrig = false }, fmta('\\cite{<>}', { i(1) })),
+  s({ trig = '\\emph', condition = tex_utils.in_text, snippetType = 'autosnippet', wordTrig = false }, fmta('\\emph{<>}', { i(1) })),
   s(
     {
       trig = '([^%a])bo;',
@@ -114,4 +120,5 @@ return {
     { trig = 'env', dscr = "Expands 'env' into LaTeX's environment command.", condition = line_begin, snippetType = 'autosnippet' },
     fmta('\\begin{<>}\n\t<>\n\\end{<>}', { i(1), i(2), rep(1) })
   ),
+  s({ trig = 'align', condition = line_begin, snippetType = 'autosnippet' }, fmta('\\begin{align*}\n\t<>\n\\end{align*}', { i(1) })),
 }

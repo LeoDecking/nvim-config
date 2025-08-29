@@ -99,6 +99,9 @@ vim.cmd 'set shiftwidth=2'
 vim.cmd 'set relativenumber'
 vim.cmd 'set textwidth=0'
 
+-- vim.opt.foldmethod = 'expr'
+-- vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+
 vim.cmd [[
   imap <silent><expr> <Tab> luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<Tab>'
   " -1 for jumping backwards.
@@ -194,6 +197,18 @@ vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
+
+vim.lsp.config.roslyn_ls = {
+  cmd = {
+    vim.fn.stdpath 'data' .. '/mason/bin/roslyn.cmd',
+    '--logLevel',
+    'Information',
+    '--extensionLogDirectory',
+    'C:/Users/Leo/AppData/Local/Temp/roslyn_ls/logs',
+    '--stdio',
+  },
+}
+vim.lsp.enable 'roslyn_ls'
 
 vim.api.nvim_create_user_command('ConfigCommit', function(opts)
   local msg = opts.args
@@ -548,6 +563,12 @@ require('lazy').setup({
     end,
   },
 
+  -- {
+  --   'seblyng/roslyn.nvim',
+  --   opts = {
+  --     -- your configuration comes here; leave empty for default settings
+  --   },
+  -- },
   -- LSP Plugins
   {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
@@ -756,6 +777,16 @@ require('lazy').setup({
           root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
           settings = {},
         },
+        roslyn_ls = {
+          cmd = {
+            vim.fn.stdpath 'data' .. '/mason/bin/roslyn.cmd',
+            '--logLevel',
+            'Information',
+            '--extensionLogDirectory',
+            'C:/Users/Leo/AppData/Local/Temp/roslyn_ls/logs',
+            '--stdio',
+          },
+        },
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -847,7 +878,12 @@ require('lazy').setup({
       --    :Mason
       --
       --  You can press `g?` for help in this menu.
-      require('mason').setup()
+      require('mason').setup {
+        registries = {
+          'github:mason-org/mason-registry',
+          'github:Crashdummyy/mason-registry',
+        },
+      }
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
@@ -862,6 +898,29 @@ require('lazy').setup({
         -- 'ltex-ls',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
+      -- local lspconfig = require 'lspconfig'
+      -- local configs = require 'lspconfig.configs'
+      -- local util = require 'lspconfig.util'
+      --
+      -- -- Register roslyn if it hasn't been defined yet
+      -- if not configs.roslyn then
+      --   configs.roslyn = {
+      --     default_config = {
+      --       cmd = { vim.fn.stdpath 'data' .. '/mason/bin/roslyn.cmd' },
+      --       filetypes = { 'cs', 'vb' },
+      --       root_dir = util.root_pattern('*.sln', '*.csproj', '.git'),
+      --       settings = {
+      --         RoslynExtensionsOptions = {
+      --           EnableAnalyzersSupport = true,
+      --           EnableImportCompletion = true,
+      --           EnableAsyncCompletion = true,
+      --         },
+      --       },
+      --     },
+      --   }
+      -- end
+      -- lspconfig.roslyn.setup {}
 
       require('mason-lspconfig').setup {
         handlers = {
@@ -898,7 +957,6 @@ require('lazy').setup({
       }
     end,
   },
-
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
@@ -1169,6 +1227,17 @@ require('lazy').setup({
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope.nvim',
     },
+  },
+  {
+    'chrisgrieser/nvim-origami',
+    event = 'VeryLazy',
+    opts = {}, -- needed even when using default config
+
+    -- recommended: disable vim's auto-folding
+    init = function()
+      vim.opt.foldlevel = 99
+      vim.opt.foldlevelstart = 99
+    end,
   },
   {
     'lervag/vimtex',
