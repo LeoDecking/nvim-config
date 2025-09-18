@@ -35,7 +35,7 @@ return {
       workspaces = {
         {
           name = 'Leo_Remote',
-          path = '/g/Leo_Remote',
+          path = 'G:\\Leo_Remote',
         },
       },
 

@@ -98,6 +98,7 @@ vim.cmd 'set softtabstop=2'
 vim.cmd 'set shiftwidth=2'
 vim.cmd 'set relativenumber'
 vim.cmd 'set textwidth=0'
+vim.cmd 'set conceallevel=2'
 
 -- vim.opt.foldmethod = 'expr'
 -- vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
@@ -1251,6 +1252,9 @@ require('lazy').setup({
       -- vim.g.vimtex_view_general_options_latexmk = '-reuse-instance'
     end,
   },
+  {
+    'ryleelyman/latex.nvim',
+  },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
@@ -1415,7 +1419,7 @@ require('dap').configurations.cpp = {
     end,
   },
 }
-
+require('latex').setup()
 -- require('luasnip').config.setup {
 --   -- history = true, -- Keep around the last snippet used
 --   updateevents = 'TextChanged,TextChangedI', -- Update snippets on text change
