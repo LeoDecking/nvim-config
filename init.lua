@@ -127,6 +127,10 @@ vim.keymap.set('i', '<M-Up>', '<Plug>(copilot-previous)')
 vim.keymap.set('i', '<M-Down>', '<Plug>(copilot-next)')
 vim.keymap.set('i', '<M-Left>', '<Plug>(copilot-dismiss)')
 
+vim.keymap.set('n', '<Leader>oo', '<Cmd>ObsidianOpen<CR>')
+vim.keymap.set('n', '<Leader>oq', '<Cmd>ObsidianQuickSwitch<CR>')
+vim.keymap.set('v', 'L', '<Cmd>ObsidianLink<CR>')
+
 vim.g.copilot_no_tab_map = true
 vim.g.copilot_assume_mapped = true
 vim.api.nvim_set_keymap('i', '<C-j>', 'copilot#Accept("<CR>")', { silent = true, expr = true })

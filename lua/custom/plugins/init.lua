@@ -35,8 +35,13 @@ return {
       workspaces = {
         {
           name = 'Leo_Remote',
-          path = 'G:\\Leo_Remote',
+          path = vim.env.OBSIDIAN_VAULT,
+          -- path = 'G:\\Leo_Remote',
         },
+        -- {
+        --   name = 'Leo_Remote',
+        --   path = 'D:\\Documents\\Leo_Remote',
+        -- }
       },
 
       -- see below for full list of options 👇

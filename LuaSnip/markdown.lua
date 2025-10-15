@@ -97,13 +97,21 @@ return {
   s({ trig = '\\mbP', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\mathbb{P}\\left[<>\\right]', { i(1) })),
   s({ trig = '\\mb(%u)', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('\\mathbb{<>}', { f(cap1) })),
   s(
+    { trig = '\\mcO', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' },
+    fmta('\\mathcal{O}\\left(<>\\right)', { d(1, get_visual) })
+  ),
+  s(
     { trig = '\\mc(%u)', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true },
     fmta('\\mathcal{<>}', { f(cap1) })
   ),
+  s({ trig = '\\seq', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\subseteq ', {})),
+  s({ trig = '\\text', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\text{<>}', { d(1, get_visual) })),
   s(
     { trig = '\\mcc', dscr = "Expands 'mc;' into LaTeX's mathcal{} command.", condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' },
     fmta('\\mathcal{<>}', { i(1) })
   ),
+  s({ trig = '\\cdot *', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{\\star}', {})),
+  s({ trig = '\\perp', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{\\perp}', {})),
   s({ trig = '*', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\cdot ', {})),
   s({ trig = '\\inn', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\in ', {})),
   s({ trig = '\\inb', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\in \\mathbb{<>}', { i(1) })),
@@ -135,6 +143,7 @@ return {
     { trig = '\\ff', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false },
     fmta('\\frac{<>}{<>}', { i(1, 'numerator'), i(2, 'denominator') })
   ),
+  s({ trig = '\\1f', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\frac{1}{<>}', { d(1, get_visual) })),
   s({ trig = '{\\dg', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('{\\dagger', {})),
   s(
     { trig = '([^\\{])\\dg', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false, regTrig = true },
@@ -145,20 +154,6 @@ return {
   s({ trig = '\\cref', condition = tex_utils.in_text, snippetType = 'autosnippet', wordTrig = false }, fmta('\\cref{<>}', { i(1) })),
   s({ trig = '\\cite', condition = tex_utils.in_text, snippetType = 'autosnippet', wordTrig = false }, fmta('\\cite{<>}', { i(1) })),
   s({ trig = '\\emph', condition = tex_utils.in_text, snippetType = 'autosnippet', wordTrig = false }, fmta('\\emph{<>}', { i(1) })),
-  s(
-    {
-      trig = '([^%a])bo;',
-      regTrig = true,
-      wordTrig = false,
-      dscr = 'big O',
-      snippetType = 'autosnippet',
-      hidden = false,
-    },
-    fmta('<>\\mathcal{O}\\left(<>\\right)', {
-      f(cap1),
-      i(1),
-    })
-  ),
   s({ trig = 'h1', dscr = 'Start a new section', condition = line_begin, snippetType = 'autosnippet' }, fmta('\\section{<>}', { i(1, 'Section Title') })),
   s({ trig = 'tii', dscr = "Expands 'tii' into LaTeX's textit{} command." }, fmta('\\textit{<>}', { d(1, get_visual) })),
   s(
