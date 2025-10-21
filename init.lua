@@ -130,6 +130,7 @@ vim.keymap.set('i', '<M-Left>', '<Plug>(copilot-dismiss)')
 vim.keymap.set('n', '<Leader>oo', '<Cmd>ObsidianOpen<CR>')
 vim.keymap.set('n', '<Leader>oq', '<Cmd>ObsidianQuickSwitch<CR>')
 vim.keymap.set('v', 'L', '<Cmd>ObsidianLink<CR>')
+vim.keymap.set('v', 'l', '<Cmd>ObsidianLinkNew<CR>')
 
 vim.g.copilot_no_tab_map = true
 vim.g.copilot_assume_mapped = true
@@ -265,8 +266,31 @@ end, {
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+-- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+local diag_toggle = require 'diagnostics_toggle'
+
+-- Toggle key
+vim.keymap.set('n', '<leader>q', diag_toggle.toggle_diag_list, { desc = 'Toggle diagnostic list' })
+
+-- Quickfix/location list buffers
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'qf' },
+  callback = function(ev)
+    vim.keymap.set('n', '<leader>q', diag_toggle.toggle_diag_list, { buffer = ev.buf })
+  end,
+})
+
+-- Update global quickfix on save **only if current buffer has errors**
+vim.api.nvim_create_autocmd('BufWritePost', {
+  callback = function()
+    local errs = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
+    if #errs > 0 then
+      diag_toggle.update_diag_list(diag_toggle.diag_state)
+    end
+    diag_toggle.show_status_message()
+  end,
+})
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.

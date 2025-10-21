@@ -13,7 +13,7 @@ return {
     },
   },
   {
-    'epwalsh/obsidian.nvim',
+    'obsidian-nvim/obsidian.nvim',
     version = '*', -- recommended, use latest release instead of latest commit
     lazy = true,
     ft = 'markdown',
@@ -43,6 +43,7 @@ return {
         --   path = 'D:\\Documents\\Leo_Remote',
         -- }
       },
+      disable_frontmatter = true,
 
       -- see below for full list of options 👇
     },
