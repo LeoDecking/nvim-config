@@ -258,6 +258,36 @@ end, {
   desc = 'Commit and push Neovim config with a message',
 })
 
+vim.api.nvim_create_user_command('ConfigPull', function()
+  local config_path = vim.fn.stdpath 'config'
+  local cwd = vim.fn.getcwd()
+  vim.cmd('cd ' .. config_path)
+
+  local function run_git_cmd(cmd)
+    local output = vim.fn.systemlist(cmd)
+    local status = vim.v.shell_error
+    local joined_output = table.concat(output, '\n')
+    if status ~= 0 then
+      vim.cmd('cd ' .. cwd)
+      vim.notify('❌ Error running: ' .. cmd .. '\n' .. joined_output, vim.log.levels.ERROR)
+      return false
+    else
+      vim.notify('✅ ' .. cmd .. ':\n' .. joined_output, vim.log.levels.INFO)
+      return true
+    end
+  end
+
+  if not run_git_cmd 'git pull --rebase' then
+    return
+  end
+
+  vim.cmd('cd ' .. cwd)
+  vim.notify('✅ Neovim config successfully pulled and updated.', vim.log.levels.INFO)
+end, {
+  nargs = 0,
+  desc = 'Pull latest changes for the Neovim config',
+})
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -987,14 +1017,14 @@ require('lazy').setup({
     end,
   },
   {
-    "mvllow/modes.nvim",
-    tag="v0.2.1",
-    config=function()
-      require("modes").setup({
-        colors={normal="#33a333"},
-        line_opacity=0.03
-      })
-    end
+    'mvllow/modes.nvim',
+    tag = 'v0.2.1',
+    config = function()
+      require('modes').setup {
+        colors = { normal = '#33a333' },
+        line_opacity = 0.23,
+      }
+    end,
   },
   { -- Autoformat
     'stevearc/conform.nvim',
@@ -1266,6 +1296,26 @@ require('lazy').setup({
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope.nvim',
     },
+    {
+      'kdheepak/lazygit.nvim',
+      lazy = true,
+      cmd = {
+        'LazyGit',
+        'LazyGitConfig',
+        'LazyGitCurrentFile',
+        'LazyGitFilter',
+        'LazyGitFilterCurrentFile',
+      },
+      -- optional for floating window border decoration
+      dependencies = {
+        'nvim-lua/plenary.nvim',
+      },
+      -- setting the keybinding for LazyGit with 'keys' is recommended in
+      -- order to load the plugin when the command is run for the first time
+      keys = {
+        { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
+      },
+    },
   },
   {
     'chrisgrieser/nvim-origami',
@@ -1466,6 +1516,7 @@ require('latex').setup()
 -- }
 vim.g.tex_flavor = 'latex'
 require('luasnip.loaders.from_lua').load { paths = { '~/AppData/Local/nvim/LuaSnip/', '~/.config/nvim/LuaSnip/' } }
+require('luasnip').filetype_extend('markdown', { 'tex' })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

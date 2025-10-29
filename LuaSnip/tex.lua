@@ -97,6 +97,18 @@ return {
   s({ trig = '\\mbP', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\mathbb{P}\\left[<>\\right]', { i(1) })),
   s({ trig = '\\mb(%u)', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('\\mathbb{<>}', { f(cap1) })),
   s(
+    {
+      trig = '\\mcO',
+      wordTrig = false,
+      dscr = 'big O',
+      snippetType = 'autosnippet',
+      hidden = false,
+    },
+    fmta('\\mathcal{O}\\left(<>\\right)', {
+      i(1),
+    })
+  ),
+  s(
     { trig = '\\mc(%u)', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true },
     fmta('\\mathcal{<>}', { f(cap1) })
   ),
@@ -104,6 +116,7 @@ return {
     { trig = '\\mcc', dscr = "Expands 'mc;' into LaTeX's mathcal{} command.", condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' },
     fmta('\\mathcal{<>}', { i(1) })
   ),
+  s({ trig = '\\cdot *', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\star', {})),
   s({ trig = '*', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\cdot ', {})),
   s({ trig = '\\inn', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\in ', {})),
   s({ trig = '\\inb', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\in \\mathbb{<>}', { i(1) })),
@@ -120,17 +133,30 @@ return {
   s({ trig = '$  ', condition = tex_utils.in_text, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$ ', {})),
   -- s({ trig = '$ \n', condition = tex_utils.in_text, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$\n', {})),
   s({ trig = '_', dscr = 'Underscore', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('_{<>}', { i(1) })),
+  s({ trig = '⁰', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{0<>}', { i(1) })),
   s({ trig = '²', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{2<>}', { i(1) })),
   s({ trig = '³', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{3<>}', { i(1) })),
+  s({ trig = '⁻', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{-<>}', { i(1) })),
   s({ trig = 'î', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{i<>}', { i(1) })),
   s({ trig = '^', dscr = 'Caret', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{<>}', { i(1) })),
   s({ trig = '\\sqrt', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\sqrt{<>}', { i(1) })),
+  s({ trig = '\\es', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\emptyset', {})),
+  s({ trig = '\\cap', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\cap ', {})),
+  s({ trig = '\\cup', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\cup ', {})),
+  s({ trig = '\\ol', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\overline{<>} ', { d(1, get_visual) })),
+  s({ trig = '\\Tr', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('Tr\\left[<>\\right]', { i(1) })),
   s({ trig = '\\ket', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\ket{<>}', { i(1) })),
   s({ trig = '\\bra', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\bra{<>}', { i(1) })),
   s({ trig = '\\bket', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\braket{<>|<>}', { i(1), i(2) })),
   s({ trig = '\\kbra', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\ket{<>}\\bra{<>}', { i(1), rep(1) })),
-  s({ trig = '|', condition = tex_utils.in_mathzone, word_Trig = false, snippetType = 'autosnippet' }, fmta('|<>|', { i(1) })),
-  s({ trig = '\\{', condition = tex_utils.in_mathzone(), word_trig = false, snippetType = 'autosnippet' }, fmta('\\{<>\\}', { d(1, get_visual) })),
+  s({ trig = '\\|', condition = tex_utils.in_mathzone, word_Trig = false, snippetType = 'autosnippet' }, fmta('\\|<>\\|', { i(1) })),
+  -- s({ trig = '|', condition = tex_utils.in_mathzone, word_Trig = false, snippetType = 'autosnippet' }, fmta('|<>|', { i(1) })),
+  s({ trig = '\\tilde', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\tilde{<>}', { d(1, get_visual) })),
+  s({ trig = '\\quad', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\quad ', {})),
+  s({ trig = '\\tt', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\text{ <> }', { d(1, get_visual) })),
+  -- s({ trig = '\\tc', condition = tex_utils.in_mathzone(), word_trig = false, snippetType = 'autosnippet' }, fmta('\\textsc{<>}', { d(1, get_visual) })),
+  s({ trig = '\\text', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\text{<>}', { d(1, get_visual) })),
+  s({ trig = '\\{', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\{<>\\}', { d(1, get_visual) })),
   s(
     { trig = '\\ff', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false },
     fmta('\\frac{<>}{<>}', { i(1, 'numerator'), i(2, 'denominator') })
@@ -140,25 +166,13 @@ return {
     { trig = '([^\\{])\\dg', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false, regTrig = true },
     fmta('<>^{\\dagger}', { f(cap1) })
   ),
+  s({ trig = '\\maxl', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\max\\limits_{<>}', { i(1) })),
+  s({ trig = '\\minl', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\min\\limits_{<>}', { i(1) })),
   s({ trig = '\\sl', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\sum\\limits_{<>}', { i(1) })),
   s({ trig = '\\pl', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\prod\\limits_{<>}', { i(1) })),
   s({ trig = '\\cref', condition = tex_utils.in_text, snippetType = 'autosnippet', wordTrig = false }, fmta('\\cref{<>}', { i(1) })),
   s({ trig = '\\cite', condition = tex_utils.in_text, snippetType = 'autosnippet', wordTrig = false }, fmta('\\cite{<>}', { i(1) })),
   s({ trig = '\\emph', condition = tex_utils.in_text, snippetType = 'autosnippet', wordTrig = false }, fmta('\\emph{<>}', { i(1) })),
-  s(
-    {
-      trig = '([^%a])bo;',
-      regTrig = true,
-      wordTrig = false,
-      dscr = 'big O',
-      snippetType = 'autosnippet',
-      hidden = false,
-    },
-    fmta('<>\\mathcal{O}\\left(<>\\right)', {
-      f(cap1),
-      i(1),
-    })
-  ),
   s({ trig = 'h1', dscr = 'Start a new section', condition = line_begin, snippetType = 'autosnippet' }, fmta('\\section{<>}', { i(1, 'Section Title') })),
   s({ trig = 'tii', dscr = "Expands 'tii' into LaTeX's textit{} command." }, fmta('\\textit{<>}', { d(1, get_visual) })),
   s(

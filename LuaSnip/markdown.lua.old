@@ -116,6 +116,7 @@ return {
     { trig = '\\mcc', dscr = "Expands 'mc;' into LaTeX's mathcal{} command.", condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' },
     fmta('\\mathcal{<>}', { i(1) })
   ),
+  s({ trig = '\\cdot *', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\star', {})),
   s({ trig = '*', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\cdot ', {})),
   s({ trig = '\\inn', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\in ', {})),
   s({ trig = '\\inb', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\in \\mathbb{<>}', { i(1) })),
