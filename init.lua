@@ -204,17 +204,35 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
-vim.lsp.config.roslyn_ls = {
-  cmd = {
-    vim.fn.stdpath 'data' .. '/mason/bin/roslyn.cmd',
-    '--logLevel',
-    'Information',
-    '--extensionLogDirectory',
-    'C:/Users/Leo/AppData/Local/Temp/roslyn_ls/logs',
-    '--stdio',
-  },
-}
-vim.lsp.enable 'roslyn_ls'
+-- vim.lsp.config.roslyn_ls = {
+--   cmd = {
+--     vim.fn.stdpath 'data' .. '/mason/bin/roslyn.cmd',
+--     '--logLevel',
+--     'Information',
+--     '--extensionLogDirectory',
+--     'C:/Users/Leo/AppData/Local/Temp/roslyn_ls/logs',
+--     '--stdio',
+--   },
+--   root_markers = { '.sln', '.csproj', '.git' },
+--   -- root_dir = function(fname)
+--   --   local util = require 'lspconfig.util'
+--   --
+--   --   -- Look for .sln or .csproj in parent directories
+--   --   return util.root_pattern '.sln'(fname) or util.root_pattern '.csproj'(fname) or util.find_git_ancestor(fname) or vim.fn.getcwd()
+--   -- end,
+--   -- root_dir = function(fname)
+--   --   return lspconfig.util.root_pattern('*.sln', '*.csproj')(fname) or lspconfig.util.find_git_ancestor(fname)
+--   -- end,
+-- }
+-- vim.lsp.enable 'roslyn_ls'
+-- require('lspconfig').omnisharp.setup {
+--   cmd = { 'dotnet', vim.fn.stdpath 'data' .. '/mason/packages/omnisharp/OmniSharp.dll' },
+--   root_dir = require('lspconfig.util').root_pattern('*.sln', '.git'),
+--   enable_editorconfig_support = true,
+--   enable_import_completion = true,
+--   organize_imports_on_format = true,
+--   enable_roslyn_analyzers = false,
+-- }
 
 vim.api.nvim_create_user_command('ConfigCommit', function(opts)
   local msg = opts.args
@@ -552,7 +570,9 @@ require('lazy').setup({
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
+        defaults = {
+          path_display = { 'smart' },
+        },
         file_ignore_patterns = { 'node_modulese', '.git' },
         --   -- mappings = {
         --   --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
@@ -836,16 +856,50 @@ require('lazy').setup({
           root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
           settings = {},
         },
-        roslyn_ls = {
+        omnisharp = {
+          -- on_attach = nvlsp.on_attach,
+          -- capabilities = nvlsp.capabilities,
           cmd = {
-            vim.fn.stdpath 'data' .. '/mason/bin/roslyn.cmd',
-            '--logLevel',
-            'Information',
-            '--extensionLogDirectory',
-            'C:/Users/Leo/AppData/Local/Temp/roslyn_ls/logs',
-            '--stdio',
+            'dotnet',
+            vim.fn.stdpath 'data' .. '\\mason\\packages\\omnisharp\\libexec\\OmniSharp.dll',
           },
+          settings = {
+            FormattingOptions = {
+              EnableEditorConfigSupport = false,
+              OrganizeImports = true,
+            },
+            Sdk = {
+              IncludePrereleases = true,
+            },
+          },
+          -- cmd = {
+          --   'dotnet',
+          --   vim.fn.stdpath 'data' .. '/mason/packages/omnisharp/OmniSharp.dll',
+          --   '--languageserver',
+          --   '--hostPID',
+          --   tostring(vim.fn.getpid()),
+          --   '--unity',
+          --   '--project',
+          --   'G:/Programmieren/2025/amoebotsim2.0/AmoebotSim 2.0/Assembly-CSharp.csproj',
+          --   -- '--solution',
+          --   -- 'G:/Programmieren/2025/amoebotsim2.0/AmoebotSim 2.0/AmoebotSim 2.0.sln',
+          -- },
+          -- root_dir = require('lspconfig.util').root_pattern('*.sln', '.git'),
+          -- enable_editorconfig_support = true,
+          -- enable_import_completion = true,
+          -- organize_imports_on_format = true,
+          -- enable_roslyn_analyzers = false,
         },
+        -- roslyn_ls = {
+        --   cmd = {
+        --     vim.fn.stdpath 'data' .. '/mason/bin/roslyn.cmd',
+        --     '--logLevel',
+        --     'Information',
+        --     '--extensionLogDirectory',
+        --     'C:/Users/Leo/AppData/Local/Temp/roslyn_ls/logs',
+        --     '--stdio',
+        --   },
+        -- },
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -1013,6 +1067,14 @@ require('lazy').setup({
         filetypes = { 'fortran' },
         root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
         settings = {},
+      }
+      require('lspconfig').omnisharp.setup {
+        cmd = { 'dotnet', vim.fn.stdpath 'data' .. '/mason/packages/omnisharp/OmniSharp.dll' },
+        root_dir = require('lspconfig.util').root_pattern('*.sln', '.git'),
+        enable_editorconfig_support = true,
+        enable_import_completion = true,
+        organize_imports_on_format = true,
+        enable_roslyn_analyzers = false,
       }
     end,
   },
@@ -1329,6 +1391,27 @@ require('lazy').setup({
     end,
   },
   {
+    'nvim-tree/nvim-tree.lua',
+    version = '*',
+    lazy = false,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('nvim-tree').setup {}
+    end,
+  },
+  {
+    'apyra/nvim-unity-sync',
+    lazy = false,
+    config = function()
+      require('unity.plugin').setup()
+    end,
+  },
+  {
+    'NewComer00/octavetui.vim',
+  },
+  {
     'lervag/vimtex',
     lazy = false, -- we don't want to lazy load VimTeX
     -- tag = "v2.15", -- uncomment to pin to a specific release
@@ -1517,6 +1600,8 @@ require('latex').setup()
 vim.g.tex_flavor = 'latex'
 require('luasnip.loaders.from_lua').load { paths = { '~/AppData/Local/nvim/LuaSnip/', '~/.config/nvim/LuaSnip/' } }
 require('luasnip').filetype_extend('markdown', { 'tex' })
+
+vim.g.octavetui_octave_executable = 'G:\\Program Files\\Octave-10.3.0\\mingw64\\bin\\octave.exe'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
