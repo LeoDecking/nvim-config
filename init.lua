@@ -572,6 +572,12 @@ require('lazy').setup({
         --
         defaults = {
           path_display = { 'smart' },
+          layout_config = {
+            horizontal = {
+              width = 0.8,
+              preview_width = 0.7,
+            },
+          },
         },
         file_ignore_patterns = { 'node_modulese', '.git' },
         --   -- mappings = {
@@ -884,7 +890,9 @@ require('lazy').setup({
           --   -- '--solution',
           --   -- 'G:/Programmieren/2025/amoebotsim2.0/AmoebotSim 2.0/AmoebotSim 2.0.sln',
           -- },
-          -- root_dir = require('lspconfig.util').root_pattern('*.sln', '.git'),
+          root_dir = function(fname)
+            return require('lspconfig.util').root_pattern('*.sln', '*.csproj', '.git')(fname)
+          end,
           -- enable_editorconfig_support = true,
           -- enable_import_completion = true,
           -- organize_imports_on_format = true,
@@ -1426,6 +1434,12 @@ require('lazy').setup({
   {
     'ryleelyman/latex.nvim',
   },
+  {
+    'rmagatti/goto-preview',
+    dependencies = { 'rmagatti/logger.nvim' },
+    event = 'BufEnter',
+    config = true, -- necessary as per https://github.com/rmagatti/goto-preview/issues/88
+  },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
@@ -1602,6 +1616,12 @@ require('luasnip.loaders.from_lua').load { paths = { '~/AppData/Local/nvim/LuaSn
 require('luasnip').filetype_extend('markdown', { 'tex' })
 
 vim.g.octavetui_octave_executable = 'G:\\Program Files\\Octave-10.3.0\\mingw64\\bin\\octave.exe'
+
+require('goto-preview').setup {
+  default_mappings = true, -- Bind default mappings
+  width = 160,
+  height = 20,
+}
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

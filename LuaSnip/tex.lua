@@ -82,21 +82,21 @@ tex_utils.empty_line_above_md = function()
   return line == '' -- true if empty
 end
 local mat = function(args, snip)
-	local rows = tonumber(snip.captures[2])
+  local rows = tonumber(snip.captures[2])
   local cols = tonumber(snip.captures[3])
-	local nodes = {}
-	local ins_indx = 1
-	for j = 1, rows do
-		table.insert(nodes, r(ins_indx, tostring(j).."x1", i(1)))
-		ins_indx = ins_indx+1
-		for k = 2, cols do
-			table.insert(nodes, t" & ")
-			table.insert(nodes, r(ins_indx, tostring(j).."x"..tostring(k), i(1)))
-			ins_indx = ins_indx+1
-		end
-		table.insert(nodes, t{"\\\\", ""})
-	end
-	return sn(nil, nodes)
+  local nodes = {}
+  local ins_indx = 1
+  for j = 1, rows do
+    table.insert(nodes, r(ins_indx, tostring(j) .. 'x1', i(1)))
+    ins_indx = ins_indx + 1
+    for k = 2, cols do
+      table.insert(nodes, t ' & ')
+      table.insert(nodes, r(ins_indx, tostring(j) .. 'x' .. tostring(k), i(1)))
+      ins_indx = ins_indx + 1
+    end
+    table.insert(nodes, t { '\\\\', '' })
+  end
+  return sn(nil, nodes)
 end
 
 return {
@@ -149,14 +149,21 @@ return {
   s({ trig = '$ (%p)', condition = tex_utils.in_text, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$<>', { f(cap1) })),
   s({ trig = '$  ', condition = tex_utils.in_text, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$ ', {})),
   -- s({ trig = '$ \n', condition = tex_utils.in_text, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$\n', {})),
-  s({ trig = '_', dscr = 'Underscore', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('_{<>}', { i(1) })),
+  -- s({ trig = '_', dscr = 'Underscore', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('_<>', { i(1) })),
+  s({ trig = '__', dscr = 'Underscore', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('_{<>}', { i(1) })),
   s({ trig = '⁰', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{0<>}', { i(1) })),
   s({ trig = '²', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{2<>}', { i(1) })),
   s({ trig = '³', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{3<>}', { i(1) })),
   s({ trig = '⁻', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{-<>}', { i(1) })),
   s({ trig = 'î', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{i<>}', { i(1) })),
   s({ trig = '^', dscr = 'Caret', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{<>}', { i(1) })),
+  s({ trig = '°', dscr = 'Caret', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^', {})),
+  s({ trig = '^°', dscr = 'Caret', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{<>}', { i(1) })),
   s({ trig = '\\sqrt', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\sqrt{<>}', { i(1) })),
+  s({ trig = '\\dots', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\dots ', {})),
+  s({ trig = '\\cdots', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\cdots ', {})),
+  s({ trig = '\\leq', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\leq ', {})),
+  s({ trig = '\\geq', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\geq ', {})),
   s({ trig = '\\es', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\emptyset', {})),
   s({ trig = '\\cap', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\cap ', {})),
   s({ trig = '\\cup', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\cup ', {})),
@@ -197,20 +204,36 @@ return {
     fmta('\\begin{<>}\n\t<>\n\\end{<>}', { i(1), i(2), rep(1) })
   ),
   s({ trig = 'align', condition = line_begin, snippetType = 'autosnippet' }, fmta('\\begin{align*}\n\t<>\n\\end{align*}', { i(1) })),
-  s({ trig='\\([bBpvV])mat(%d+)x(%d+)([ar])', regTrig=true,  condition = tex_utils.in_mathzone, snippetType='autosnippet',name='matrix', dscr='matrix trigger lets go'},
-    fmt([[
+  s(
+    {
+      trig = '\\([bBpvV])mat(%d+)x(%d+)([ar])',
+      regTrig = true,
+      condition = tex_utils.in_mathzone,
+      snippetType = 'autosnippet',
+      name = 'matrix',
+      dscr = 'matrix trigger lets go',
+    },
+    fmt(
+      [[
     \begin{<>}<>
     <>\end{<>}]],
-    { f(function (_, snip) return snip.captures[1] .. "matrix" end),
-    f(function (_, snip) -- augments
-        if snip.captures[4] == "a" then
-            out = string.rep("c", tonumber(snip.captures[3]) - 1)
-            return "[" .. out .. "|c]"
-        end
-        return ""
-    end),
-    d(1, mat),
-    f(function (_, snip) return snip.captures[1] .. "matrix" end)},
-    { delimiters='<>' }
-    ))
+      {
+        f(function(_, snip)
+          return snip.captures[1] .. 'matrix'
+        end),
+        f(function(_, snip) -- augments
+          if snip.captures[4] == 'a' then
+            out = string.rep('c', tonumber(snip.captures[3]) - 1)
+            return '[' .. out .. '|c]'
+          end
+          return ''
+        end),
+        d(1, mat),
+        f(function(_, snip)
+          return snip.captures[1] .. 'matrix'
+        end),
+      },
+      { delimiters = '<>' }
+    )
+  ),
 }
