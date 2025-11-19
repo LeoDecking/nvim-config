@@ -37,7 +37,7 @@ tex_utils.in_mathzone = function()
     local ts_utils = require 'nvim-treesitter.ts_utils'
     local node = ts_utils.get_node_at_cursor()
     while node do
-      if node:type() == 'inline_formula' or node:type() == 'inline_equation' or node:type() == 'displayed_equation' then
+      if node:type() == 'inline_formula' or node:type() == 'inline_equation' or node:type() == 'displayed_equation' or node:type() == '_generic_command' then
         return true
       end
       node = node:parent()
@@ -130,14 +130,45 @@ return {
     fmta('\\mathcal{<>}', { f(cap1) })
   ),
   s(
+    { trig = '\\mb(%u)', condition = tex_utils.in_markdown, wordTrig = false, snippetType = 'autosnippet', regTrig = true },
+    fmta('$\\mathbb{<>}$', { f(cap1) })
+  ),
+  s(
+    { trig = '\\mc(%u)', condition = tex_utils.in_markdown, wordTrig = false, snippetType = 'autosnippet', regTrig = true },
+    fmta('$\\mathcal{<>}$', { f(cap1) })
+  ),
+  s(
     { trig = '\\mcc', dscr = "Expands 'mc;' into LaTeX's mathcal{} command.", condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' },
     fmta('\\mathcal{<>}', { i(1) })
   ),
+  s({ trig = '$ )', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$)', {})),
+  s({ trig = ' ,', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta(',', {})),
+  s({ trig = '\\alpha', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('\\alpha ', {})),
+  s({ trig = '\\beta', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('\\beta ', {})),
+  s({ trig = '\\gamma', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('\\gamma ', {})),
+  s({ trig = '\\delta', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('\\delta ', {})),
+  s({ trig = '\\lambda', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('\\lambda ', {})),
+  s({ trig = '\\theta', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('\\theta ', {})),
+  s({ trig = '\\rho', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('\\rho ', {})),
+  s({ trig = '\\sigma', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('\\sigma ', {})),
+  s({ trig = '\\phi', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('\\phi ', {})),
+  s({ trig = '\\psi', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('\\psi ', {})),
+  s({ trig = '\\alpha', condition = tex_utils.in_markdown, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$\\alpha$', {})),
+  s({ trig = '\\beta', condition = tex_utils.in_markdown, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$\\beta$', {})),
+  s({ trig = '\\gamma', condition = tex_utils.in_markdown, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$\\gamma$', {})),
+  s({ trig = '\\delta', condition = tex_utils.in_markdown, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$\\delta$', {})),
+  s({ trig = '\\lambda', condition = tex_utils.in_markdown, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$\\lambda$', {})),
+  s({ trig = '\\theta', condition = tex_utils.in_markdown, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$\\theta$', {})),
+  s({ trig = '\\rho', condition = tex_utils.in_markdown, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$\\rho$', {})),
+  s({ trig = '\\sigma', condition = tex_utils.in_markdown, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$\\sigma$', {})),
+  s({ trig = '\\phi', condition = tex_utils.in_markdown, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$\\phi$', {})),
+  s({ trig = '\\psi', condition = tex_utils.in_markdown, wordTrig = false, snippetType = 'autosnippet', regTrig = true }, fmta('$\\psi$', {})),
   s({ trig = '\\cdot *', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\star', {})),
   s({ trig = '*', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\cdot ', {})),
   s({ trig = '\\inn', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\in ', {})),
   s({ trig = '\\inb', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\in \\mathbb{<>}', { i(1) })),
   s({ trig = '\\ee', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\varepsilon', {})),
+  s({ trig = '\\€e', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\varepsilon', {})),
   -- s({ trig = '(', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('(<>)', { d(1, get_visual) })),
   s({ trig = '\\(', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\left(<>\\right)', { d(1, get_visual) })),
   s({ trig = 'mm', dscr = '$..$', condition = tex_utils.in_text, wordTrig = true, snippetType = 'autosnippet' }, fmta('$<>$ ', { d(1, get_visual) })),
@@ -159,11 +190,20 @@ return {
   s({ trig = '^', dscr = 'Caret', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{<>}', { i(1) })),
   s({ trig = '°', dscr = 'Caret', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^', {})),
   s({ trig = '^°', dscr = 'Caret', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{<>}', { i(1) })),
+  s({ trig = '\\expp', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{<>}', { i(1) })),
+  s({ trig = '\\exp(%w)', condition = tex_utils.in_mathzone, wordTrig = false, regTrig = true, snippetType = 'autosnippet' }, fmta('^{<>}', { f(cap1) })),
+  s({ trig = '\\sqq', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^2', {})),
+  s({ trig = '\\cbb', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^2', {})),
+  s({ trig = '\\sp', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\langle <>, <> \\rangle', { i(1), i(2) })),
   s({ trig = '\\sqrt', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\sqrt{<>}', { i(1) })),
   s({ trig = '\\dots', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\dots ', {})),
   s({ trig = '\\cdots', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\cdots ', {})),
+  s({ trig = '\\seq', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\subseteq ', {})),
+  s({ trig = '\\neq', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\neq ', {})),
   s({ trig = '\\leq', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\leq ', {})),
   s({ trig = '\\geq', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\geq ', {})),
+  s({ trig = '\\preceq', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\preceq ', {})),
+  s({ trig = '\\ott', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\otimes ', {})),
   s({ trig = '\\es', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\emptyset', {})),
   s({ trig = '\\cap', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\cap ', {})),
   s({ trig = '\\cup', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\cup ', {})),
@@ -177,10 +217,19 @@ return {
   -- s({ trig = '|', condition = tex_utils.in_mathzone, word_Trig = false, snippetType = 'autosnippet' }, fmta('|<>|', { i(1) })),
   s({ trig = '\\tilde', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\tilde{<>}', { d(1, get_visual) })),
   s({ trig = '\\quad', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\quad ', {})),
+  s({ trig = '\\rarr', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\rightarrow ', {})),
+  s({ trig = '\\larr', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\leftarrow ', {})),
+  s({ trig = '\\RLarr', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\Rightleftarrow ', {})),
+  s({ trig = '\\Rarr', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\Rightarrow ', {})),
+  s({ trig = '\\Larr', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\Leftarrow ', {})),
   s({ trig = '\\tt', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\text{ <> }', { d(1, get_visual) })),
   -- s({ trig = '\\tc', condition = tex_utils.in_mathzone(), word_trig = false, snippetType = 'autosnippet' }, fmta('\\textsc{<>}', { d(1, get_visual) })),
   s({ trig = '\\text', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\text{<>}', { d(1, get_visual) })),
   s({ trig = '\\{', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\{<>\\}', { d(1, get_visual) })),
+  s(
+    { trig = '\\oss', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false },
+    fmta('\\overset{<>}{<>}', { i(1, 'top'), i(2, 'bottom') })
+  ),
   s(
     { trig = '\\ff', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false },
     fmta('\\frac{<>}{<>}', { i(1, 'numerator'), i(2, 'denominator') })

@@ -44,6 +44,9 @@ return {
         -- }
       },
       disable_frontmatter = true,
+      open = {
+        use_advanced_uri = true,
+      },
 
       -- see below for full list of options 👇
     },
