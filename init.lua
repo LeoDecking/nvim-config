@@ -866,7 +866,7 @@ require('lazy').setup({
           -- on_attach = nvlsp.on_attach,
           -- capabilities = nvlsp.capabilities,
           cmd = {
-            'dotnet',
+            'dotnet.exe',
             vim.fn.stdpath 'data' .. '\\mason\\packages\\omnisharp\\libexec\\OmniSharp.dll',
           },
           settings = {
@@ -1076,14 +1076,14 @@ require('lazy').setup({
         root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
         settings = {},
       }
-      require('lspconfig').omnisharp.setup {
-        cmd = { 'dotnet', vim.fn.stdpath 'data' .. '/mason/packages/omnisharp/OmniSharp.dll' },
-        root_dir = require('lspconfig.util').root_pattern('*.sln', '.git'),
-        enable_editorconfig_support = true,
-        enable_import_completion = true,
-        organize_imports_on_format = true,
-        enable_roslyn_analyzers = false,
-      }
+      -- require('lspconfig').omnisharp.setup {
+      --   cmd = { 'dotnet.exe', vim.fn.stdpath 'data' .. '/mason/packages/omnisharp/OmniSharp.dll' },
+      --   root_dir = require('lspconfig.util').root_pattern('*.sln', '.git'),
+      --   enable_editorconfig_support = true,
+      --   enable_import_completion = true,
+      --   organize_imports_on_format = true,
+      --   enable_roslyn_analyzers = false,
+      -- }
     end,
   },
   {
@@ -1415,6 +1415,13 @@ require('lazy').setup({
     config = function()
       require('unity.plugin').setup()
     end,
+  },
+  {
+    'csessh/aoc.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = {
+      session_filepath = 'G:\\\\Programmieren\\2025\\aoc\\session',
+    },
   },
   {
     'NewComer00/octavetui.vim',
