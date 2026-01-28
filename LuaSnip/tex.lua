@@ -172,7 +172,11 @@ return {
   -- s({ trig = '(', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('(<>)', { d(1, get_visual) })),
   s({ trig = '\\(', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\left(<>\\right)', { d(1, get_visual) })),
   s({ trig = 'mm', dscr = '$..$', condition = tex_utils.in_text, wordTrig = true, snippetType = 'autosnippet' }, fmta('$<>$ ', { d(1, get_visual) })),
-  s({ trig = 'nn', condition = line_begin, wordTrig = true, snippetType = 'autosnippet' }, fmta('$$\n\t<>\n$$\n ', { d(1, get_visual) })),
+  s(
+    { trig = 'aa', condition = line_begin, wordTrig = true, snippetType = 'autosnippet' },
+    fmta('$$\n\\begin{align*}\n\t<>\n\\end{align*}\n$$\n ', { d(1, get_visual) })
+  ),
+  s({ trig = 'nn', condition = line_begin, wordTrig = true, snippetType = 'autosnippet' }, fmta('$$\n<>\n$$\n ', { d(1, get_visual) })),
   s(
     { trig = '([^%w])m,([%w])', condition = tex_utils.in_text, wordTrig = false, snippetType = 'autosnippet', regTrig = true },
     fmta('<>$<>$ ', { f(cap1), f(cap2) })
@@ -184,11 +188,15 @@ return {
   s({ trig = ' _', dscr = 'Underscore', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta(' _', {})),
   s({ trig = '__', dscr = 'Underscore', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('_{<>}', { i(1) })),
   s({ trig = '⁰', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{0<>}', { i(1) })),
+  s({ trig = '\\sqq', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{2}', {})),
   s({ trig = '²', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{2<>}', { i(1) })),
   s({ trig = '³', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{3<>}', { i(1) })),
   s({ trig = '⁻', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{-<>}', { i(1) })),
   s({ trig = 'î', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{i<>}', { i(1) })),
   s({ trig = '^', dscr = 'Caret', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{<>}', { i(1) })),
+  -- s({ trig = '°', dscr = 'Caret', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{<>}', { i(1) })),
+  s({ trig = '\\T', dscr = 'Caret', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^T', {})),
+  s({ trig = '\\sqrt', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\sqrt{<>}', { i(1) })),
   s({ trig = '°', dscr = 'Caret', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^', {})),
   s({ trig = '^°', dscr = 'Caret', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{<>}', { i(1) })),
   s({ trig = '\\expp', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('^{<>}', { i(1) })),
@@ -218,6 +226,14 @@ return {
   -- s({ trig = '|', condition = tex_utils.in_mathzone, word_Trig = false, snippetType = 'autosnippet' }, fmta('|<>|', { i(1) })),
   s({ trig = '\\tilde', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\tilde{<>}', { d(1, get_visual) })),
   s({ trig = '\\quad', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\quad ', {})),
+  s({ trig = '\\&', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('&\\overset{}{\\qquad<>\\qquad} ', { i(1) })),
+  s(
+    { trig = '&\\os', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' },
+    fmta('&\\overset{<>}{\\qquad<>\\qquad} ', { i(1), i(2) })
+  ),
+  s({ trig = '\\os', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\overset{<>}{<>}', { i(1), i(2) })),
+  s({ trig = '\\ t t', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\text{ <> }', { d(1, get_visual) })),
+  s({ trig = '\\t t', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\text{<> }', { d(1, get_visual) })),
   s({ trig = '\\rarr', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\rightarrow ', {})),
   s({ trig = '\\larr', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\leftarrow ', {})),
   s({ trig = '\\RLarr', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\Rightleftarrow ', {})),
@@ -225,7 +241,7 @@ return {
   s({ trig = '\\Larr', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\Leftarrow ', {})),
   s({ trig = '\\tt', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\text{ <> }', { d(1, get_visual) })),
   -- s({ trig = '\\tc', condition = tex_utils.in_mathzone(), word_trig = false, snippetType = 'autosnippet' }, fmta('\\textsc{<>}', { d(1, get_visual) })),
-  s({ trig = '\\text', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\text{<>}', { d(1, get_visual) })),
+  s({ trig = '\\tt', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\text{<>}', { d(1, get_visual) })),
   s({ trig = '\\{', condition = tex_utils.in_mathzone, word_trig = false, snippetType = 'autosnippet' }, fmta('\\{<>\\}', { d(1, get_visual) })),
   s(
     { trig = '\\oss', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false },
@@ -256,7 +272,8 @@ return {
   s({ trig = 'align', condition = line_begin, snippetType = 'autosnippet' }, fmta('\\begin{align*}\n\t<>\n\\end{align*}', { i(1) })),
   s(
     {
-      trig = '\\([bBpvV])mat(%d+)x(%d+)([ar])',
+      trig = '\\([pb])mat(%d+)x(%d+)([ar])',
+      wordTrig = false,
       regTrig = true,
       condition = tex_utils.in_mathzone,
       snippetType = 'autosnippet',
@@ -264,23 +281,22 @@ return {
       dscr = 'matrix trigger lets go',
     },
     fmt(
-      [[
-    \begin{<>}<>
-    <>\end{<>}]],
+      [[\left<>\begin{array}<>
+    <>\end{array}\right<>]],
       {
         f(function(_, snip)
-          return snip.captures[1] .. 'matrix'
+          return (snip.captures[1] == 'p') and '(' or '['
         end),
         f(function(_, snip) -- augments
           if snip.captures[4] == 'a' then
             out = string.rep('c', tonumber(snip.captures[3]) - 1)
-            return '[' .. out .. '|c]'
+            return '{' .. out .. '|c}'
           end
-          return ''
+          return '\\'
         end),
         d(1, mat),
         f(function(_, snip)
-          return snip.captures[1] .. 'matrix'
+          return (snip.captures[1] == 'p') and ')' or ']'
         end),
       },
       { delimiters = '<>' }
