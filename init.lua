@@ -129,8 +129,8 @@ vim.keymap.set('i', '<M-Left>', '<Plug>(copilot-dismiss)')
 
 vim.keymap.set('n', '<Leader>oo', '<Cmd>ObsidianOpen<CR>')
 vim.keymap.set('n', '<Leader>oq', '<Cmd>ObsidianQuickSwitch<CR>')
-vim.keymap.set('v', 'L', '<Cmd>ObsidianLink<CR>')
-vim.keymap.set('v', 'l', '<Cmd>ObsidianLinkNew<CR>')
+-- vim.keymap.set('v', 'L', '<Cmd>ObsidianLink<CR>')
+-- vim.keymap.set('v', 'l', '<Cmd>ObsidianLinkNew<CR>')
 
 vim.g.copilot_no_tab_map = true
 vim.g.copilot_assume_mapped = true
