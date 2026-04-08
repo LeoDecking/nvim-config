@@ -44,7 +44,7 @@ return {
         --   path = 'D:\\Documents\\Leo_Remote',
         -- }
       },
-      disable_frontmatter = true,
+      -- disable_frontmatter = true,
       checkbox = {
         create_new = false,
       },
@@ -54,7 +54,7 @@ return {
       attachments = {
         folder = '/Attachements',
       },
-
+      legacy_commands = false,
       -- see below for full list of options 👇
     },
   },

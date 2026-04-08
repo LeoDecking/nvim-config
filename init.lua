@@ -864,7 +864,7 @@ require('lazy').setup({
         roslyn = {},
         -- gopls = {},
         pyright = {},
-        ltex_ls_plus = {},
+        -- ltex_plus = {},
         fortls = {
           -- -- cmd = { 'fortls', '--notify_init', '--hover_signature', '--hover_language=fortran', '--use_signature_help', '--lowercase_intrinsics' },
           -- cmd = { '/usr/bin/fortls', '--notify_init', '--hover_signature', '--lowercase_intrinsics' },
@@ -1591,7 +1591,7 @@ require('lazy').setup({
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     -- branch = 'main',
-    build = ':TSUpdate',
+    -- build = ':TSUpdate',
     -- main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
@@ -1601,7 +1601,7 @@ require('lazy').setup({
       highlight = {
         enable = true,
         -- disable = { 'tex', 'latex' },
-        disable = { 'tex' },
+        -- disable = { 'tex' },
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.

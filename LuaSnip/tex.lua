@@ -30,15 +30,17 @@ local tex_utils = {}
 
 tex_utils.in_mathzone = function()
   if vim.bo.filetype == 'tex' then
-    -- Use VimTeX for .tex files
     return vim.fn['vimtex#syntax#in_mathzone']() == 1
   elseif vim.bo.filetype == 'markdown' then
-    -- Use Treesitter for markdown files
-    -- local ts_utils = require 'nvim-treesitter.ts_utils'
-    -- local node = ts_utils.get_node_at_cursor()
-    local node = vim.treesitter.get_node { bufnr = 0, pos = vim.api.nvim_win_get_cursor(0) }
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    local node = vim.treesitter.get_node {
+      bufnr = 0,
+      pos = { cursor[1] - 1, cursor[2] },
+      ignore_injections = false, -- descend into injected latex tree
+    }
     while node do
-      if node:type() == 'inline_formula' or node:type() == 'inline_equation' or node:type() == 'displayed_equation' or node:type() == '_generic_command' then
+      local t = node:type()
+      if t == 'latex_block' or t == 'inline_formula' then
         return true
       end
       node = node:parent()
@@ -47,6 +49,26 @@ tex_utils.in_mathzone = function()
   end
   return false
 end
+
+-- tex_utils.in_mathzone = function()
+--   if vim.bo.filetype == 'tex' then
+--     -- Use VimTeX for .tex files
+--     return vim.fn['vimtex#syntax#in_mathzone']() == 1
+--   elseif vim.bo.filetype == 'markdown' then
+--     -- Use Treesitter for markdown files
+--     -- local ts_utils = require 'nvim-treesitter.ts_utils'
+--     -- local node = ts_utils.get_node_at_cursor()
+--     local node = vim.treesitter.get_node { bufnr = 0, pos = vim.api.nvim_win_get_cursor(0), ignore_injections = false }
+--     while node do
+--       if node:type() == 'inline_formula' or node:type() == 'inline_equation' or node:type() == 'displayed_equation' or node:type() == '_generic_command' then
+--         return true
+--       end
+--       node = node:parent()
+--     end
+--     return false
+--   end
+--   return false
+-- end
 
 tex_utils.in_text = function()
   return not tex_utils.in_mathzone()
