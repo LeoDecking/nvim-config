@@ -87,6 +87,7 @@ P.S. You can delete this when you're done too. It's your config now! :)
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
+
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
@@ -99,6 +100,11 @@ vim.cmd 'set shiftwidth=2'
 vim.cmd 'set relativenumber'
 vim.cmd 'set textwidth=0'
 vim.cmd 'set conceallevel=2'
+
+vim.cmd 'packadd nvim.undotree'
+vim.cmd 'packadd nvim.difftool'
+
+require('vim._core.ui2').enable {}
 
 -- vim.opt.foldmethod = 'expr'
 -- vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
@@ -517,7 +523,7 @@ require('lazy').setup({
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
-    branch = '0.1.x',
+    -- branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
@@ -649,12 +655,12 @@ require('lazy').setup({
     end,
   },
 
-  -- {
-  --   'seblyng/roslyn.nvim',
-  --   opts = {
-  --     -- your configuration comes here; leave empty for default settings
-  --   },
-  -- },
+  {
+    'seblyng/roslyn.nvim',
+    opts = {
+      -- your configuration comes here; leave empty for default settings
+    },
+  },
   -- LSP Plugins
   {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
@@ -768,7 +774,8 @@ require('lazy').setup({
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
+          -- map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
+          map('<leader>ca', require('tiny-code-action').code_action, '[C]ode [A]ction', { 'n', 'x' })
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
@@ -790,7 +797,7 @@ require('lazy').setup({
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
           local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+          if client and client:supports_method 'textDocument/documentHighlight' then
             local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
               buffer = event.buf,
@@ -817,7 +824,7 @@ require('lazy').setup({
           -- code, if the language server you are using supports them
           --
           -- This may be unwanted, since they displace some of your code
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+          if client and client:supports_method 'textDocument/inlayHint' then
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
@@ -838,8 +845,8 @@ require('lazy').setup({
       --  By default, Neovim doesn't support everything that is in the LSP specification.
       --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+      -- local capabilities = vim.lsp.protocol.make_client_capabilities()
+      -- capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -854,51 +861,53 @@ require('lazy').setup({
         -- latex = {
         -- },
         clangd = {},
+        roslyn = {},
         -- gopls = {},
         pyright = {},
+        ltex_ls_plus = {},
         fortls = {
-          -- cmd = { 'fortls', '--notify_init', '--hover_signature', '--hover_language=fortran', '--use_signature_help', '--lowercase_intrinsics' },
-          cmd = { '/usr/bin/fortls', '--notify_init', '--hover_signature', '--lowercase_intrinsics' },
-          filetypes = { 'fortran' },
-          root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
-          settings = {},
+          -- -- cmd = { 'fortls', '--notify_init', '--hover_signature', '--hover_language=fortran', '--use_signature_help', '--lowercase_intrinsics' },
+          -- cmd = { '/usr/bin/fortls', '--notify_init', '--hover_signature', '--lowercase_intrinsics' },
+          -- filetypes = { 'fortran' },
+          -- root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
+          -- settings = {},
         },
-        omnisharp = {
-          -- on_attach = nvlsp.on_attach,
-          -- capabilities = nvlsp.capabilities,
-          cmd = {
-            'dotnet.exe',
-            vim.fn.stdpath 'data' .. '\\mason\\packages\\omnisharp\\libexec\\OmniSharp.dll',
-          },
-          settings = {
-            FormattingOptions = {
-              EnableEditorConfigSupport = false,
-              OrganizeImports = true,
-            },
-            Sdk = {
-              IncludePrereleases = true,
-            },
-          },
-          -- cmd = {
-          --   'dotnet',
-          --   vim.fn.stdpath 'data' .. '/mason/packages/omnisharp/OmniSharp.dll',
-          --   '--languageserver',
-          --   '--hostPID',
-          --   tostring(vim.fn.getpid()),
-          --   '--unity',
-          --   '--project',
-          --   'G:/Programmieren/2025/amoebotsim2.0/AmoebotSim 2.0/Assembly-CSharp.csproj',
-          --   -- '--solution',
-          --   -- 'G:/Programmieren/2025/amoebotsim2.0/AmoebotSim 2.0/AmoebotSim 2.0.sln',
-          -- },
-          root_dir = function(fname)
-            return require('lspconfig.util').root_pattern('*.sln', '*.csproj', '.git')(fname)
-          end,
-          -- enable_editorconfig_support = true,
-          -- enable_import_completion = true,
-          -- organize_imports_on_format = true,
-          -- enable_roslyn_analyzers = false,
-        },
+        -- omnisharp = {},
+        --   -- on_attach = nvlsp.on_attach,
+        --   -- capabilities = nvlsp.capabilities,
+        --   cmd = {
+        --     'dotnet.exe',
+        --     vim.fn.stdpath 'data' .. '\\mason\\packages\\omnisharp\\libexec\\OmniSharp.dll',
+        --   },
+        --   settings = {
+        --     FormattingOptions = {
+        --       EnableEditorConfigSupport = false,
+        --       OrganizeImports = true,
+        --     },
+        --     Sdk = {
+        --       IncludePrereleases = true,
+        --     },
+        --   },
+        --   -- cmd = {
+        --   --   'dotnet',
+        --   --   vim.fn.stdpath 'data' .. '/mason/packages/omnisharp/OmniSharp.dll',
+        --   --   '--languageserver',
+        --   --   '--hostPID',
+        --   --   tostring(vim.fn.getpid()),
+        --   --   '--unity',
+        --   --   '--project',
+        --   --   'G:/Programmieren/2025/amoebotsim2.0/AmoebotSim 2.0/Assembly-CSharp.csproj',
+        --   --   -- '--solution',
+        --   --   -- 'G:/Programmieren/2025/amoebotsim2.0/AmoebotSim 2.0/AmoebotSim 2.0.sln',
+        --   -- },
+        --   root_dir = function(fname)
+        --     return require('lspconfig.util').root_pattern('*.sln', '*.csproj', '.git')(fname)
+        --   end,
+        --   -- enable_editorconfig_support = true,
+        --   -- enable_import_completion = true,
+        --   -- organize_imports_on_format = true,
+        --   -- enable_roslyn_analyzers = false,
+        -- },
         -- roslyn_ls = {
         --   cmd = {
         --     vim.fn.stdpath 'data' .. '/mason/bin/roslyn.cmd',
@@ -1044,39 +1053,45 @@ require('lazy').setup({
       -- end
       -- lspconfig.roslyn.setup {}
 
-      require('mason-lspconfig').setup {
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
-      }
+      -- require('mason-lspconfig').setup {
+      --   handlers = {
+      --     function(server_name)
+      --       local server = servers[server_name] or {}
+      --       -- This handles overriding only values explicitly passed
+      --       -- by the server configuration above. Useful when disabling
+      --       -- certain features of an LSP (for example, turning off formatting for ts_ls)
+      --       server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+      --       require('lspconfig')[server_name].setup(server)
+      --     end,
+      --   },
+      -- }
+
+      for server_name, server_opts in pairs(servers) do
+        vim.lsp.config(server_name, server_opts)
+        vim.lsp.enable(server_name)
+      end
 
       -- require('lspconfig')['ltex-ls-plus'].setup {
       --   cmd = { 'ltex-ls-plus' },
-      --   filetypes = { 'markdown', 'text', 'tex', 'latex', 'bib' },
+      --   -- filetypes = { 'markdown', 'text', 'tex', 'latex', 'bib' },
+      --   filetypes = { 'text', 'tex', 'latex', 'bib' },
       --   root_dir = require('lspconfig').util.root_pattern('.ltex-ls-plus', '.git'),
       -- }
-
-      require('lspconfig').fortls.setup {
-        cmd = {
-          'fortls',
-          -- '~/AppData/Local/nvim-data/mason/bin/fortls.CMD',
-          '--notify_init',
-          '--hover_signature',
-          '--hover_language=fortran',
-          '--use_signature_help',
-          '--lowercase_intrinsics',
-        },
-        filetypes = { 'fortran' },
-        root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
-        settings = {},
-      }
+      --
+      -- require('lspconfig').fortls.setup {
+      --   cmd = {
+      --     'fortls',
+      --     -- '~/AppData/Local/nvim-data/mason/bin/fortls.CMD',
+      --     '--notify_init',
+      --     '--hover_signature',
+      --     '--hover_language=fortran',
+      --     '--use_signature_help',
+      --     '--lowercase_intrinsics',
+      --   },
+      --   filetypes = { 'fortran' },
+      --   root_dir = require('lspconfig').util.root_pattern('.fortls', '.git', '*.f90', '*.f'),
+      --   settings = {},
+      -- }
       -- require('lspconfig').omnisharp.setup {
       --   cmd = { 'dotnet.exe', vim.fn.stdpath 'data' .. '/mason/packages/omnisharp/OmniSharp.dll' },
       --   root_dir = require('lspconfig.util').root_pattern('*.sln', '.git'),
@@ -1513,8 +1528,59 @@ require('lazy').setup({
       -- vim.g.vimtex_view_general_options_latexmk = '-reuse-instance'
     end,
   },
+  -- {
+  --   'pxwg/math-conceal.nvim',
+  --   event = 'VeryLazy',
+  --   main = 'math-conceal',
+  --   --- @type LaTeXConcealOptions
+  --   opts = {
+  --     conceal = {
+  --       'greek',
+  --       'script',
+  --       'math',
+  --       'font',
+  --       'delim',
+  --       'phy',
+  --     },
+  --     ft = { 'plaintex', 'tex', 'context', 'bibtex', 'markdown', 'typst' },
+  --   },
+  -- },
+  -- {
+  --   'robbielyman/latex.nvim',
+  -- },
+  -- {
+  --   'Thiago4532/mdmath.nvim',
+  --   dependencies = {
+  --     'nvim-treesitter/nvim-treesitter',
+  --   },
+  --   opts = {
+  --     dynamic_scale = 0.5,
+  --   },
+  --
+  --   -- The build is already done by default in lazy.nvim, so you don't need
+  --   -- the next line, but you can use the command `:MdMath build` to rebuild
+  --   -- if the build fails for some reason.
+  --   -- build = ':MdMath build'
+  -- },
   {
-    'ryleelyman/latex.nvim',
+    'rachartier/tiny-code-action.nvim',
+    dependencies = {
+      { 'nvim-lua/plenary.nvim' },
+
+      -- optional picker via telescope
+      { 'nvim-telescope/telescope.nvim' },
+      -- -- optional picker via fzf-lua
+      -- { 'ibhagwan/fzf-lua' },
+      -- -- .. or via snacks
+      -- {
+      --   'folke/snacks.nvim',
+      --   opts = {
+      --     terminal = {},
+      --   },
+      -- },
+    },
+    event = 'LspAttach',
+    opts = {},
   },
   {
     'rmagatti/goto-preview',
@@ -1524,16 +1590,18 @@ require('lazy').setup({
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    -- branch = 'main',
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
+    -- main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      -- ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
         enable = true,
-        disable = { 'tex', 'latex' },
+        -- disable = { 'tex', 'latex' },
+        disable = { 'tex' },
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
@@ -1664,6 +1732,22 @@ require('toggleterm').setup {
   shell = vim.o.shell, -- change the default shell
 }
 
+vim.api.nvim_create_user_command('LspInfo', 'checkhealth vim.lsp', {
+  desc = 'Show LSP Info',
+})
+
+vim.api.nvim_create_user_command('LspLog', function(_)
+  local state_path = vim.fn.stdpath 'state'
+  local log_path = vim.fs.joinpath(state_path, 'lsp.log')
+
+  vim.cmd(string.format('edit %s', log_path))
+end, {
+  desc = 'Show LSP log',
+})
+
+vim.api.nvim_create_user_command('LspRestart', 'lsp restart', {
+  desc = 'Restart LSP',
+})
 require('dap').adapters.codelldb = {
   type = 'server',
   port = '${port}',
@@ -1689,7 +1773,7 @@ require('dap').configurations.cpp = {
     end,
   },
 }
-require('latex').setup()
+-- require('latex').setup()
 -- require('luasnip').config.setup {
 --   -- history = true, -- Keep around the last snippet used
 --   updateevents = 'TextChanged,TextChangedI', -- Update snippets on text change
