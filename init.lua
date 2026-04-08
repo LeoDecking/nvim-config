@@ -1142,6 +1142,15 @@ require('lazy').setup({
   {
     'micangl/cmp-vimtex',
   },
+  --   {
+  --     'MeanderingProgrammer/render-markdown.nvim',
+  --     dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },            -- if you use the mini.nvim suite
+  --     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
+  --     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+  --     ---@module 'render-markdown'
+  --     ---@type render.md.UserConfig
+  --     opts = {},
+  -- },
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
     event = 'InsertEnter',
@@ -1293,10 +1302,72 @@ require('lazy').setup({
       vim.cmd.hi 'Comment gui=none'
     end,
   },
-
+  -- {
+  --   'zbirenbaum/copilot.lua',
+  --   dependencies = {
+  --     'copilotlsp-nvim/copilot-lsp', -- (optional) for NES functionality
+  --   },
+  --   cmd = 'Copilot',
+  --   event = 'InsertEnter',
+  --   config = function()
+  --     require('copilot').setup {
+  --       suggestion = {
+  --         keymap = { accept = '<C-j>', accept_word = '<M-Up>', next = '<M-Right>', prev = '<M-Left>', dismiss = '<M-Down>' },
+  --       },
+  --       nes = {
+  --         enabled = true,
+  --         auto_trigger = true,
+  --         keymap = {
+  --           accept_and_goto = '<leader>p',
+  --           accept = false,
+  --           dismiss = '<Esc>',
+  --         },
+  --       },
+  --       filetypes = {
+  --         ['*'] = true,
+  --       },
+  --       logger = {
+  --         file_log_level = vim.log.levels.TRACE,
+  --         print_log_level = vim.log.levels.WARN,
+  --         trace_lsp = 'verbose',
+  --         log_lsp_messages = true,
+  --         trace_lsp_progress = true,
+  --       },
+  --     }
+  --   end,
+  -- },
+  -- {
+  --   'copilotlsp-nvim/copilot-lsp',
+  --   init = function()
+  --     vim.g.copilot_nes_debounce = 500
+  --     vim.lsp.enable 'copilot_ls'
+  --     vim.keymap.set('n', '<tab>', function()
+  --       -- vim.keymap.set('n', '<C-j>', function()
+  --       local bufnr = vim.api.nvim_get_current_buf()
+  --       local state = vim.b[bufnr].nes_state
+  --       if state then
+  --         -- Try to jump to the start of the suggestion edit.
+  --         -- If already at the start, then apply the pending suggestion and jump to the end of the edit.
+  --         local _ = require('copilot-lsp.nes').walk_cursor_start_edit()
+  --           or (require('copilot-lsp.nes').apply_pending_nes() and require('copilot-lsp.nes').walk_cursor_end_edit())
+  --         return nil
+  --       else
+  --         -- Resolving the terminal's inability to distinguish between `TAB` and `<C-i>` in normal mode
+  --         return '<C-i>'
+  --       end
+  --     end, { desc = 'Accept Copilot NES suggestion', expr = true })
+  --     vim.keymap.set('n', '<esc>', function()
+  --       if not require('copilot-lsp.nes').clear() then
+  --       end
+  --     end, { desc = 'Clear Copilot suggestion or fallback' })
+  --   end,
+  -- },
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-  { 'echasnovski/mini.surround', version = false },
+  {
+    'echasnovski/mini.surround',
+    version = false,
+  },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -1328,6 +1399,9 @@ require('lazy').setup({
           update_n_lines = 'gsn', -- Update `n_lines`
         },
         n_lines = 500,
+        custom_surroundings = {
+          ['7'] = { output = { left = '{\n', right = '\n}' } },
+        },
       }
 
       -- Simple and easy statusline.
@@ -1351,7 +1425,7 @@ require('lazy').setup({
   },
   { 'catppuccin/nvim', name = 'catppuccin', priority = 999 },
   { 'mhinz/vim-startify' },
-  { 'github/copilot.vim' },
+  { 'github/copilot.vim', tag = 'v1.58.0' },
   {
     'nosduco/remote-sshfs.nvim',
     dependencies = { 'nvim-telescope/telescope.nvim' },
@@ -1502,6 +1576,9 @@ require('lazy').setup({
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
+  dev = {
+    path = vim.fn.stdpath 'config' .. '/plugins/',
+  },
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
     -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
