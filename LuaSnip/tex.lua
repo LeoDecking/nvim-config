@@ -34,8 +34,9 @@ tex_utils.in_mathzone = function()
     return vim.fn['vimtex#syntax#in_mathzone']() == 1
   elseif vim.bo.filetype == 'markdown' then
     -- Use Treesitter for markdown files
-    local ts_utils = require 'nvim-treesitter.ts_utils'
-    local node = ts_utils.get_node_at_cursor()
+    -- local ts_utils = require 'nvim-treesitter.ts_utils'
+    -- local node = ts_utils.get_node_at_cursor()
+    local node = vim.treesitter.get_node { bufnr = 0, pos = vim.api.nvim_win_get_cursor(0) }
     while node do
       if node:type() == 'inline_formula' or node:type() == 'inline_equation' or node:type() == 'displayed_equation' or node:type() == '_generic_command' then
         return true
