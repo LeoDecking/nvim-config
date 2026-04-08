@@ -132,6 +132,7 @@ vim.keymap.set('n', '<Leader>oq', '<Cmd>ObsidianQuickSwitch<CR>')
 -- vim.keymap.set('v', 'L', '<Cmd>ObsidianLink<CR>')
 -- vim.keymap.set('v', 'l', '<Cmd>ObsidianLinkNew<CR>')
 
+vim.g.copilot_npx = false
 vim.g.copilot_no_tab_map = true
 vim.g.copilot_assume_mapped = true
 vim.api.nvim_set_keymap('i', '<C-j>', 'copilot#Accept("<CR>")', { silent = true, expr = true })

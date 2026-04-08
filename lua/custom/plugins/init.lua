@@ -14,6 +14,7 @@ return {
   },
   {
     'obsidian-nvim/obsidian.nvim',
+    dev = true,
     version = '*', -- recommended, use latest release instead of latest commit
     lazy = true,
     ft = 'markdown',
@@ -44,11 +45,29 @@ return {
         -- }
       },
       disable_frontmatter = true,
+      checkbox = {
+        create_new = false,
+      },
       open = {
         use_advanced_uri = true,
       },
+      attachments = {
+        folder = '/Attachements',
+      },
 
       -- see below for full list of options 👇
+    },
+  },
+  {
+    'folke/snacks.nvim',
+    priority = 1000,
+    lazy = false,
+    opts = {
+      image = {
+        -- your image configuration comes here
+        -- or leave it empty to use the default settings
+        -- refer to the configuration section below
+      },
     },
   },
   {
