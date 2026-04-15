@@ -133,8 +133,8 @@ vim.keymap.set('i', '<M-Up>', '<Plug>(copilot-previous)')
 vim.keymap.set('i', '<M-Down>', '<Plug>(copilot-next)')
 vim.keymap.set('i', '<M-Left>', '<Plug>(copilot-dismiss)')
 
-vim.keymap.set('n', '<Leader>oo', '<Cmd>ObsidianOpen<CR>')
-vim.keymap.set('n', '<Leader>oq', '<Cmd>ObsidianQuickSwitch<CR>')
+vim.keymap.set('n', '<Leader>oo', '<Cmd>Obsidian open<CR>')
+vim.keymap.set('n', '<Leader>oq', '<Cmd>Obsidian quick_switch<CR>')
 -- vim.keymap.set('v', 'L', '<Cmd>ObsidianLink<CR>')
 -- vim.keymap.set('v', 'l', '<Cmd>ObsidianLinkNew<CR>')
 
