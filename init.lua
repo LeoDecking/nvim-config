@@ -1600,12 +1600,13 @@ require('lazy').setup({
       auto_install = true,
       highlight = {
         enable = true,
-        -- disable = { 'tex', 'latex' },
+        disable = { 'tex', 'latex', 'markdown' },
+        additional_vim_regex_highlighting = { 'latex', 'markdown' },
         -- disable = { 'tex' },
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
+        -- additional_vim_regex_highlighting = { 'ruby' },
       },
       indent = { enable = true, disable = { 'ruby' } },
     },
@@ -1616,6 +1617,7 @@ require('lazy').setup({
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
+  { 'KeitaNakamura/tex-conceal.vim' },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and

@@ -40,7 +40,7 @@ tex_utils.in_mathzone = function()
     }
     while node do
       local t = node:type()
-      if t == 'latex_block' or t == 'inline_formula' or t=='displayed_equation' then
+      if t == 'latex_block' or t == 'inline_formula' or t == 'inline_equation' or t == 'displayed_equation' then
         return true
       end
       node = node:parent()
