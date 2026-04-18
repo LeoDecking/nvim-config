@@ -40,7 +40,7 @@ tex_utils.in_mathzone = function()
     }
     while node do
       local t = node:type()
-      if t == 'latex_block' or t == 'inline_formula' then
+      if t == 'latex_block' or t == 'inline_formula' or t=='displayed_equation' then
         return true
       end
       node = node:parent()
@@ -246,8 +246,9 @@ return {
   s({ trig = '\\bra', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\bra{<>}', { i(1) })),
   s({ trig = '\\bket', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\braket{<>|<>}', { i(1), i(2) })),
   s({ trig = '\\kbra', condition = tex_utils.in_mathzone, wordTrig = false, snippetType = 'autosnippet' }, fmta('\\ket{<>}\\bra{<>}', { i(1), rep(1) })),
-  s({ trig = '\\gg', condition = tex_utils.in_mathzone, word_Trig = false, snippetType = 'autosnippet' }, fmta('>>', {  })),
-  s({ trig = '\\ll', condition = tex_utils.in_mathzone, word_Trig = false, snippetType = 'autosnippet' }, fmta('<<', {  })),
+  s({ trig = '\\gg', tex_utils.in_markdown, word_Trig = false, snippetType = 'autosnippet' }, fmta('>>', {  })),
+  s({ trig = '\\gg', tex_utils.in_mathzone, word_Trig = false, snippetType = 'autosnippet' }, fmta('>>', {  })),
+  s({ trig = '\\ss', condition = tex_utils.in_mathzone, word_Trig = false, snippetType = 'autosnippet' }, fmta('<<', {  })),
   s({ trig = '\\mm', condition = tex_utils.in_mathzone, word_Trig = false, snippetType = 'autosnippet' }, fmta('|<>|', { i(1) })),
   s({ trig = '\\nn', condition = tex_utils.in_mathzone, word_Trig = false, snippetType = 'autosnippet' }, fmta('\\|<>\\|', { i(1) })),
   s({ trig = '\\|', condition = tex_utils.in_mathzone, word_Trig = false, snippetType = 'autosnippet' }, fmta('\\|<>\\|', { i(1) })),
@@ -287,6 +288,8 @@ return {
   s({ trig = '\\maxl', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\max\\limits_{<>}', { i(1) })),
   s({ trig = '\\minl', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\min\\limits_{<>}', { i(1) })),
   s({ trig = '\\sl', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\sum\\limits_{<>}', { i(1) })),
+  s({ trig = '\\sel', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\sum\\limits_{<>=<>}^{<>}', { i(1,'n'),i(2,'1'),i(3,'\\infty') })),
+  s({ trig = '\\ll', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\lim\\limits_{<>\\rightarrow<>}', { i(1,'n'),i(2,'\\infty') })),
   s({ trig = '\\il', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\int\\limits_{<>}^{<>} <> \\,d<>', { i(1), i(2),i(3),i(4) })),
   s({ trig = '\\pl', condition = tex_utils.in_mathzone, snippetType = 'autosnippet', wordTrig = false }, fmta('\\prod\\limits_{<>}', { i(1) })),
   s({ trig = '\\cref', condition = tex_utils.in_text, snippetType = 'autosnippet', wordTrig = false }, fmta('\\cref{<>}', { i(1) })),
